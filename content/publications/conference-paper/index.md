@@ -1,22 +1,26 @@
 ---
-title: 'An example conference paper'
+title: 'A Generalized Unknown Malware Classification'
 
 # Authors
 # If you created a profile for a user (e.g. the default `me` user), write the username (folder name) here
 # and it will be replaced with their full name and linked to their profile.
 authors:
+  - Nanda Rani
+  - Ayushi Mishra
+  - Rahul Kumar
   - me
-  - Robert Ford
+  - Sandeep K. Shukla
+  - Priyanka Bagade
 
 # Author notes (optional)
 author_notes:
-  - 'Equal contribution'
-  - 'Equal contribution'
+  - ''
+  - ''
 
-date: '2013-07-01T00:00:00Z'
+date: '2022-09-01T00:00:00Z'
 
 # Schedule page publish date (NOT publication's date).
-publishDate: '2017-01-01T00:00:00Z'
+publishDate: '2022-09-01T00:00:00Z'
 
 # Publication type.
 # Accepts a single type but formatted as a YAML list (for Hugo requirements).
@@ -24,16 +28,18 @@ publishDate: '2017-01-01T00:00:00Z'
 publication_types: ['paper-conference']
 
 # Publication name and optional abbreviated publication name.
-publication: In *HugoBlox Kit Conference*
-publication_short: In *ICW*
+publication: In *International Conference on Security and Privacy in Communication Systems*
+publication_short: In *SecureComm 2022*
 
-abstract: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis posuere tellus ac convallis placerat. Proin tincidunt magna sed ex sollicitudin condimentum. Sed ac faucibus dolor, scelerisque sollicitudin nisi. Cras purus urna, suscipit quis sapien eu, pulvinar tempor diam. Quisque risus orci, mollis id ante sit amet, gravida egestas nisl. Sed ac tempus magna. Proin in dui enim. Donec condimentum, sem id dapibus fringilla, tellus enim condimentum arcu, nec volutpat est felis vel metus. Vestibulum sit amet erat at nulla eleifend gravida.
+abstract: This paper presents a novel approach to classifying unknown malware using machine learning techniques and advanced feature extraction methods. The method generalizes well across different malware families and achieves high classification accuracy.
 
 # Summary. An optional shortened abstract.
-summary: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis posuere tellus ac convallis placerat. Proin tincidunt magna sed ex sollicitudin condimentum.
+summary: A novel approach to classifying unknown malware using machine learning techniques and feature extraction methods.
 
 tags:
-  - Large Language Models
+  - Malware Classification
+  - Security
+  - Machine Learning
 
 # Display this page in the Featured widget?
 featured: true
@@ -41,37 +47,36 @@ featured: true
 # Standard identifiers for auto-linking
 hugoblox:
   ids:
-    doi: 10.5555/123456
+    doi: ''
 
 # Custom links
 links:
   - type: pdf
     url: ""
   - type: code
-    url: https://github.com/HugoBlox/kit
+    url: ""
   - type: dataset
-    url: https://github.com/HugoBlox/kit
+    url: ""
   - type: slides
-    url: https://www.slideshare.net/
+    url: ""
   - type: source
-    url: https://github.com/HugoBlox/kit
+    url: ""
   - type: video
-    url: https://youtube.com
+    url: ""
 
 # Featured image
 # To use, add an image named `featured.jpg/png` to your page's folder.
 image:
-  caption: 'Image credit: [**Unsplash**](https://unsplash.com/photos/pLCdAaMFLTE)'
+  caption: ''
   focal_point: ''
-  preview_only: false
+  preview_only: true
 
 # Associated Projects (optional).
 #   Associate this publication with one or more of your projects.
 #   Simply enter your project's folder or file name without extension.
 #   E.g. `internal-project` references `content/project/internal-project/index.md`.
 #   Otherwise, set `projects: []`.
-projects:
-  - example
+projects: []
 
 # Slides (optional).
 #   Associate this publication with Markdown slides.
