@@ -82,6 +82,8 @@ hugoblox:
   # ────────────────────────────────────────────────────────────────────────────
   header:
     enable: true
+    # Text shown at the top-left of the navbar (defaults to identity.name)
+    title: "Sarbajit Ghosh · সর্বজিৎ ঘোষ"
     # Header style variant
     style: navbar                       # navbar | navbar-simple | minimal
     # Stick to top on scroll

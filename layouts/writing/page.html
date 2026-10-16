@@ -7,7 +7,7 @@
 <body>
 
 <nav><div class="nav-inner">
-  <a class="nav-name" href="{{ "/" | relURL }}">{{ $name }}<span class="dot">.</span></a>
+  <a class="nav-name" href="{{ "/" | relURL }}">{{ site.Params.hugoblox.header.title | default $name }}<span class="dot">.</span></a>
   <a class="back" href="{{ .Parent.RelPermalink }}">← Writing</a>
 </div></nav>
 

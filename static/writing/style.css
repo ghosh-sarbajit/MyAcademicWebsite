@@ -55,9 +55,9 @@
   --rail:200px;    /* section heading rail */
 
   /* type — "serif" is intentionally the mono face: headings are monospace */
-  --serif:'JetBrains Mono',ui-monospace,monospace;
-  --sans:'IBM Plex Sans',system-ui,sans-serif;
-  --mono:'JetBrains Mono',ui-monospace,monospace;
+  --serif:'JetBrains Mono','Noto Sans Bengali',ui-monospace,monospace;
+  --sans:'IBM Plex Sans','Noto Sans Bengali',system-ui,sans-serif;
+  --mono:'JetBrains Mono','Noto Sans Bengali',ui-monospace,monospace;
   --deva:'Noto Sans Devanagari','IBM Plex Sans',system-ui,sans-serif;
 }
 
