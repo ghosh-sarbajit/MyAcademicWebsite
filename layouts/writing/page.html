@@ -1,0 +1,32 @@
+{{- $name := site.Params.hugoblox.identity.name -}}
+<!DOCTYPE html>
+<html lang="{{ site.Language.LanguageCode }}" data-theme="terminal">
+<head>
+{{ partial "writing/head.html" . }}
+</head>
+<body>
+
+<nav><div class="nav-inner">
+  <a class="nav-name" href="{{ "/" | relURL }}">{{ $name }}<span class="dot">.</span></a>
+  <a class="back" href="{{ .Parent.RelPermalink }}">← Writing</a>
+</div></nav>
+
+<article class="post">
+  {{ with .Params.topic }}<p class="eyebrow">Writing · {{ . }}</p>{{ end }}
+  <h1>{{ .Title }}</h1>
+  {{ with .Params.standfirst }}<p class="standfirst">{{ . }}</p>{{ end }}
+  <div class="byline"><b>{{ $name }}</b> · {{ .Date.Format "2 January 2006" }} · {{ .ReadingTime }} min read</div>
+
+  {{ .Content }}
+
+  <div class="endmatter">
+    <p class="about">{{ $name }} is a PhD scholar in Computer Science at IIT Kanpur. <a href="{{ "/" | relURL }}">More about me</a>.</p>
+  </div>
+</article>
+
+<footer class="plain">
+  <div>© {{ now.Year }} {{ $name }}. All rights reserved.</div>
+</footer>
+
+</body>
+</html>

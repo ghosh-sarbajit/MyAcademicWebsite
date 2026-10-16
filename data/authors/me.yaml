@@ -8,8 +8,6 @@ name:
   alternate: 'সর্বজিৎ ঘোষ'
   # pronunciation: 's̪əɾbəd͡ʒɪt̪ gʰoːʂə'
   pronouns: he/him
-postnominals:
-  - PhD
 status:
   icon: "📚"
 role: PhD Scholar in Computer Science
@@ -46,10 +44,6 @@ education:
     end: 
     summary: |
       CPI: 8.00
-    button:
-      text: Download dissertation
-      url: /resume.pdf
-      icon: hero/arrow-down-tray
   - degree: M.Tech in Cryptology and Information Security
     institution: Indian Statistical Institute, Kolkata
     start: 2019
@@ -161,13 +155,6 @@ languages:
     level: 4
     label: Proficient
 
-# awards:
-#   - title: Best Paper Award
-#     awarder: NeurIPS
-#     date: "2022-12-01"
-#     summary: Awarded for groundbreaking work on efficient training of large models.
-#     icon: hero/trophy
-
 awards:
   - title: First-Class First Vice-Chancellor Gold Medal
     awarder: West Bengal State University
@@ -178,9 +165,9 @@ awards:
     awarder: Graduate Aptitude Test in Engineering
     date: "2019-01-01"
     summary: Qualified with 98.01 percentile among all candidates.
-    icon: academicons/award
+    icon: hero/trophy
   - title: GATE Qualified in Computer Science
     awarder: Graduate Aptitude Test in Engineering
     date: "2021-01-01"
     summary: Qualified with 87.26 percentile among all candidates.
-    icon: academicons/award
+    icon: hero/trophy

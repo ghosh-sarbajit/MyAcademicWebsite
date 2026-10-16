@@ -1,4 +1,0 @@
-[submodule "public"]
-	path = public
-	url = git@github.com:ghosh-sarbajit/ghosh-sarbajit.github.io.git
-	branch = main

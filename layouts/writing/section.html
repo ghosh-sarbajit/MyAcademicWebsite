@@ -1,0 +1,60 @@
+{{- $name := site.Params.hugoblox.identity.name -}}
+<!DOCTYPE html>
+<html lang="{{ site.Language.LanguageCode }}">
+<head>
+{{ partial "writing/head.html" . }}
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a class="nav-name" href="{{ "/" | relURL }}">{{ $name }}<span class="dot">.</span></a>
+    <ul class="nav-links">
+      <li><a href="{{ "/" | relURL }}">Bio</a></li>
+      <li><a href="{{ "/#publications" | relURL }}">Publications</a></li>
+      <li><a href="{{ "experience/" | relURL }}">Experience</a></li>
+      <li><a class="active" href="{{ .RelPermalink }}">Writing</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner single">
+    <div>
+      <p class="eyebrow reveal">Notes &amp; essays</p>
+      <h1 class="reveal">{{ .Title }}<span class="caret"></span></h1>
+      {{ with .Content }}<div class="lede reveal">{{ . }}</div>{{ end }}
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="block" id="writing">
+    <div class="wrap block-grid">
+      <div class="rail reveal"><h2>All writing</h2></div>
+      <div class="body reveal">
+        {{ range .Pages.ByDate.Reverse }}
+        <div class="pub">
+          <h3 class="pub-title"><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+          {{ with .Params.standfirst }}<p class="pub-authors">{{ . }}</p>{{ end }}
+          <span class="pub-venue">{{ with .Params.topic }}{{ . }} · {{ end }}{{ .Date.Format "2 January 2006" }} · {{ .ReadingTime }} min read</span>
+        </div>
+        {{ else }}
+        <p>Nothing here yet.</p>
+        {{ end }}
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="f-inner">
+    <div class="f-name">{{ $name }}<span class="dot">.</span></div>
+    <div class="f-meta disclaimer">All views expressed on this website are my own.</div>
+    <div class="f-meta">© {{ now.Year }} {{ $name }}</div>
+  </div>
+</footer>
+
+<script src="{{ "writing/site.js" | relURL }}"></script>
+</body>
+</html>

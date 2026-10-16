@@ -13,18 +13,18 @@ hugoblox:
   # ────────────────────────────────────────────────────────────────────────────
   identity:
     # Site name - shown in navbar, footer, copyright, and browser title by default
-    name: "Your Name"
+    name: "Sarbajit Ghosh"
     # Legal entity for copyright notices (defaults to name if not set)
-    organization: ""
+    organization: "Sarbajit Ghosh"
     # Schema.org type for structured data
     type: person                        # person | organization | local_business
     # Short tagline displayed on your site
-    tagline: ""
+    tagline: "PhD Scholar in Computer Science, IIT Kanpur"
     # Site meta description for search engines and social sharing
-    description: "The highly-customizable Hugo Academic theme powered by HugoBlox Kit. Easily create your personal academic website."
+    description: "Sarbajit Ghosh is a PhD scholar in Computer Science at IIT Kanpur, researching differential privacy and machine learning."
     # Social accounts (used for meta tags like Twitter Cards)
     social:
-      twitter: "MakeOwnable"              # Twitter/X handle for Twitter Cards (without @)
+      twitter: ""                        # Twitter/X handle for Twitter Cards (without @)
 
   # ────────────────────────────────────────────────────────────────────────────
   # THEME
@@ -129,7 +129,7 @@ hugoblox:
   # ────────────────────────────────────────────────────────────────────────────
   seo:
     # Browser tab title override (defaults to identity.name if not set)
-    title: ""
+    title: "Sarbajit Ghosh"
     # For local_business identity type only
     location:
       address:
@@ -148,7 +148,7 @@ hugoblox:
         - /
       disallow: []
       note: "Guidance for AI crawlers - customize to match your public content."
-      contact: ""
+      contact: "sarbajitg@cse.iitk.ac.in"
 
   # ────────────────────────────────────────────────────────────────────────────
   # CONTENT
@@ -232,7 +232,7 @@ hugoblox:
   # ────────────────────────────────────────────────────────────────────────────
   repository:
     enable: false
-    url: ""                             # e.g., https://github.com/username/repo
+    url: "https://github.com/ghosh-sarbajit/MyAcademicWebsite"
     branch: main
     content_dir: content
 

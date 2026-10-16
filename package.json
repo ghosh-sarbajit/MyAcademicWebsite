@@ -1,9 +1,9 @@
 {
-  "name": "hugo-blox-academic-cv-starter",
+  "name": "sarbajit-ghosh-academic-website",
   "version": "1.0.0",
   "private": true,
   "packageManager": "pnpm@10.14.0",
-  "description": "Academic CV starter template for Hugo Blox with Tailwind CSS v4",
+  "description": "Academic website of Sarbajit Ghosh, built with Hugo and HugoBlox",
   "scripts": {
     "dev": "hugo server --disableFastRender",
     "build": "hugo --minify && pnpm run pagefind",
