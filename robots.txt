@@ -1,0 +1,3 @@
+User-agent: *
+
+Sitemap: https://ghosh-sarbajit.github.io/sitemap.xml
