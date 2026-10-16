@@ -64,10 +64,11 @@ jobs:
     uses: ./.github/workflows/build.yml
     secrets: inherit
 
-  # Deploy website to GitHub Pages hosting (only if configured)
+  # Deploy website to GitHub Pages hosting (only if configured).
+  # Only the github.io repo serves the site; MyAcademicWebsite just builds as a check.
   deploy:
     needs: [config, build]
-    if: needs.config.outputs.deploy-host == 'github-pages'
+    if: needs.config.outputs.deploy-host == 'github-pages' && github.repository == 'ghosh-sarbajit/ghosh-sarbajit.github.io'
     # Grant GITHUB_TOKEN the permissions required to make a Pages deployment
     permissions:
       pages: write # to deploy to Pages
