@@ -6,7 +6,8 @@ name:
   given: Sarbajit
   family: Ghosh
   alternate: 'সর্বজিৎ ঘোষ'
-  # pronunciation: 's̪əɾbəd͡ʒɪt̪ gʰoːʂə'
+  # Shown as a small annotation above the name on the homepage
+  pronunciation: 'সর্বজিৎ ঘোষ'
   pronouns: he/him
 status:
   icon: "📚"
@@ -28,8 +29,18 @@ links:
     url: https://github.com/ghosh-sarbajit
   - icon: academicons/google-scholar
     url: https://scholar.google.com/citations?user=AVrr4S8AAAAJ&hl=en&oi=ao
+  - icon: academicons/semantic-scholar
+    url: https://www.semanticscholar.org/author/Sarbajit-Ghosh/152709675
+    label: Semantic Scholar
+  - icon: academicons/dblp
+    url: https://dblp.org/pid/350/8503.html
+    label: DBLP
   - icon: academicons/orcid
     url: https://orcid.org/0009-0008-2477-586X
+    label: ORCID
+  - icon: brands/linkedin
+    url: https://www.linkedin.com/in/sarbajit-ghosh-a91b7a157/
+    label: LinkedIn
 
 interests:
   - Differential Privacy
@@ -74,31 +85,34 @@ experience:
     org: Indian Institute of Technology, Kanpur
     start: 2022-01-01
     summary: |
-      • CS729 & CS798 Differential Privacy in Machine Learning (Spring 2026, 2025)
-      • CS787 Generative Artificial Intelligence (Fall 2025)
-      • CS685 Data Mining (Fall 2024, 2021)
-      • CS689 Computational Linguistics for Indian Languages (Spring 2024, Fall 2022)
-      • CS798 Introduction to Probability for Computer Science (Fall 2023)
-      • ESC112 Fundamentals of Computing - II (Summer 2023)
-      • CS315 Principles of Database Systems (Spring 2023)
-      • CS657 Information Retrieval (Spring 2022)
+      Courses assisted:
+
+      - **CS729 & CS798** · Differential Privacy in Machine Learning — *Spring 2026, Spring 2025*
+      - **CS787** · Generative Artificial Intelligence — *Fall 2025*
+      - **CS685** · Data Mining — *Fall 2024, Fall 2021*
+      - **CS689** · Computational Linguistics for Indian Languages — *Spring 2024, Fall 2022*
+      - **CS798** · Introduction to Probability for Computer Science — *Fall 2023*
+      - **ESC112** · Fundamentals of Computing II — *Summer 2023*
+      - **CS315** · Principles of Database Systems — *Spring 2023*
+      - **CS657** · Information Retrieval — *Spring 2022*
   - role: Statistical Programmer
     org: Imerit Technologies, Kolkata
     start: 2020-06-01
     end: 2020-08-31
     summary: |
-      Project: Analysis of Factors that Impact Data Annotation Productivity in Complex CV Projects
-      • Statistical Analysis and Socio-economic Survey
-      • Modeled time per task in CV projects based on project characteristics
-      • Technologies: R (dplyr, ggplot2, caret), Google Sheets, Tableau, MongoDB
+      **Project:** Analysis of factors that impact data-annotation productivity in complex computer-vision projects
+
+      - Statistical analysis and socio-economic survey
+      - Modelled time per task in CV projects from project characteristics
+      - **Tools:** R (dplyr, ggplot2, caret), Google Sheets, Tableau, MongoDB
   - role: Guest Lecturer
     org: Department of Statistics, Chakdaha Day College, Kalyani University
     start: 2018-08-01
     end: 2019-07-31
     summary: |
-      • Taught Descriptive Statistics & Probability Theory
-      • Taught Statistical Inference at UG level
-      • Organized internal & external examinations
+      - Taught Descriptive Statistics and Probability Theory
+      - Taught Statistical Inference at undergraduate level
+      - Organised internal and external examinations
 
 skills:
   - name: Programming Languages
