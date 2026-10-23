@@ -3,6 +3,7 @@ title: 'We are all star child'
 date: 2026-10-16
 topic: Astrophysics
 standfirst: 'Why our Sun alone could never have made the elements we are built from.'
+description: 'How stars forge the elements we are made of — and why our Sun alone could never produce them. A short essay by Sarbajit Ghosh.'
 ---
 
 **Claim:** We truly are star children.

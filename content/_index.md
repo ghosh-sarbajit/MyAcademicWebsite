@@ -2,6 +2,9 @@
 # Leave the homepage title empty to use the site title
 title: ''
 summary: ''
+# Browser tab / search result title for the homepage only
+seo:
+  title: 'Sarbajit Ghosh — PhD Scholar in Computer Science, IIT Kanpur'
 date: 2022-10-24
 type: landing
 

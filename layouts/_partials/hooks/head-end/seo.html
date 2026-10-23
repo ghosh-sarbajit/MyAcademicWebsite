@@ -1,0 +1,60 @@
+{{- /* Extra search-engine metadata, injected into <head> by the HugoBlox head-end hook.
+     Everything is read from data/authors/me.yaml, so keep that file up to date. */ -}}
+{{- $me := site.Data.authors.me -}}
+{{- $person_id := printf "%s#person" site.Home.Permalink -}}
+
+{{- /* Homepage: describe the site owner as a schema.org Person so search engines can link
+     this site with the same person's Scholar, ORCID, DBLP, LinkedIn and GitHub profiles. */ -}}
+{{- if .IsHome -}}
+  {{- $same_as := slice -}}
+  {{- range $me.links -}}
+    {{- if not (hasPrefix .url "mailto:") }}{{ $same_as = $same_as | append .url }}{{ end -}}
+  {{- end -}}
+  {{- $alumni := slice -}}
+  {{- range $me.education -}}
+    {{- if .end }}{{ $alumni = $alumni | append (dict "@type" "EducationalOrganization" "name" .institution) }}{{ end -}}
+  {{- end -}}
+  {{- $affiliation := slice -}}
+  {{- range $me.affiliations -}}
+    {{- $affiliation = $affiliation | append (dict "@type" "CollegeOrUniversity" "name" .name "url" .url) -}}
+  {{- end -}}
+  {{- $person := dict
+      "@context" "https://schema.org"
+      "@type" "Person"
+      "@id" $person_id
+      "name" $me.name.display
+      "givenName" $me.name.given
+      "familyName" $me.name.family
+      "alternateName" $me.name.alternate
+      "url" site.Home.Permalink
+      "jobTitle" $me.role
+      "description" (replace (trim $me.bio "\n ") "\n" " ")
+      "affiliation" $affiliation
+      "alumniOf" $alumni
+      "knowsAbout" $me.interests
+      "sameAs" $same_as
+  -}}
+  {{- with resources.Get "media/sharing.jpg" }}{{ $person = merge $person (dict "image" .Permalink) }}{{ end }}
+  <script type="application/ld+json">{{ $person | jsonify | safeJS }}</script>
+{{- end -}}
+
+{{- /* Publication pages: Highwire Press citation tags, which Google Scholar uses to index papers. */ -}}
+{{- if and .IsPage (eq .Type "publications") -}}
+  <meta name="citation_title" content="{{ .Title }}">
+  {{- range .Params.authors }}
+  <meta name="citation_author" content="{{ if eq . "me" }}{{ $me.name.display }}{{ else }}{{ . }}{{ end }}">
+  {{- end }}
+  <meta name="citation_publication_date" content="{{ .Date.Format "2006/01/02" }}">
+  {{- with .Params.publication }}
+    {{- $venue := . | markdownify | plainify | replaceRE `^In ` "" | replaceRE `,.*$` "" }}
+    {{- if in $.Params.publication_types "paper-conference" }}
+  <meta name="citation_conference_title" content="{{ $venue }}">
+    {{- else }}
+  <meta name="citation_journal_title" content="{{ $venue }}">
+    {{- end }}
+  {{- end }}
+  {{- with .Params.hugoblox.ids.doi }}
+  <meta name="citation_doi" content="{{ . }}">
+  {{- end }}
+  <meta name="citation_abstract_html_url" content="{{ .Permalink }}">
+{{- end -}}
