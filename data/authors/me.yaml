@@ -8,6 +8,10 @@ name:
   alternate: 'সর্বজিৎ ঘোষ'
   # Shown as a small annotation above the name on the homepage
   pronunciation: 'সর্বজিৎ ঘোষ'
+  # Shown below the name on the homepage (local addition, see layouts/_partials/hbx/blocks/resume-biography-3/block.html)
+  below:
+    text: 'ஸர்பஜித் கோஷ'
+    lang: ta
   pronouns: he/him
 status:
   icon: "📚"
@@ -35,6 +39,9 @@ links:
   - icon: academicons/dblp
     url: https://dblp.org/pid/350/8503.html
     label: DBLP
+  - icon: academicons/scopus
+    url: https://www.scopus.com/authid/detail.uri?authorId=58102872800
+    label: Scopus
   - icon: academicons/orcid
     url: https://orcid.org/0009-0008-2477-586X
     label: ORCID

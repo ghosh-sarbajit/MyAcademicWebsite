@@ -1,0 +1,11 @@
+{{- /* Small style fixes for the multi-script name (Bengali above, Tamil below) and the long navbar title. */ -}}
+<style>
+  /* Keep the Bengali annotation together and centred, and don't letter-space Indic scripts
+     (extra spacing breaks up conjuncts). */
+  .hb-ruby-name rt { ruby-align: center; letter-spacing: 0; }
+  .hb-name-below { letter-spacing: 0; }
+  /* The navbar title holds three scripts plus IPA: shrink it on phones so it fits on one line. */
+  @media (max-width: 640px) {
+    .navbar-brand { font-size: 0.8rem; white-space: nowrap; }
+  }
+</style>

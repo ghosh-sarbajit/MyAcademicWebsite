@@ -25,7 +25,7 @@
       "name" $me.name.display
       "givenName" $me.name.given
       "familyName" $me.name.family
-      "alternateName" $me.name.alternate
+      "alternateName" (slice $me.name.alternate $me.name.below.text)
       "url" site.Home.Permalink
       "jobTitle" $me.role
       "description" (replace (trim $me.bio "\n ") "\n" " ")

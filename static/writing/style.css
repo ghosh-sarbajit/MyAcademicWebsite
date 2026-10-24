@@ -124,6 +124,9 @@ nav{
   letter-spacing:-.01em;white-space:nowrap;text-decoration:none;
 }
 .nav-name .dot{color:var(--accent);}
+/* the site name mixes Latin, Bengali and IPA: the sans face renders IPA diacritics
+   more reliably than the monospace one */
+nav .nav-name{font-family:var(--sans);}
 .nav-links{
   display:flex;gap:6px;list-style:none;margin:0;padding:0;
   overflow-x:auto;scrollbar-width:none;
@@ -452,7 +455,8 @@ article.longread{padding:40px 0 70px;max-width:var(--readw);}
 }
 @media(max-width:600px){
   article.post{padding:38px 16px 30px;}
-  .nav-inner{padding:12px 16px;}
+  .nav-inner{padding:12px 16px;flex-wrap:wrap;row-gap:6px;}
+  .nav-name{white-space:normal;font-size:.95rem;}
   :where(.post) p{font-size:1.02rem;}
   figure.fig img{padding:8px;}
 }
