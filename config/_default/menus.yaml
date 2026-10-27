@@ -1,5 +1,6 @@
 # Navigation Links
 #   The weight parameter defines the order that the links will appear in.
+#   Entries with a `parent` show up in a dropdown under that entry.
 
 main:
   - name: Bio
@@ -14,3 +15,19 @@ main:
   - name: Writing
     url: writing/
     weight: 40
+  - name: Apps
+    identifier: apps
+    url: apps/
+    weight: 50
+  - name: Literature Finder
+    parent: apps
+    url: apps/literature-finder/
+    weight: 1
+  - name: Citation Download
+    parent: apps
+    url: apps/citation-download/
+    weight: 2
+  - name: All apps
+    parent: apps
+    url: apps/
+    weight: 9

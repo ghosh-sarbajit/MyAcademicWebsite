@@ -1,0 +1,27 @@
+{{- /* Network settings (common.js settingsPanel). .citation adds the citation-only fields. */ -}}
+<details class="panel settings">
+  <summary class="panel-head">Settings</summary>
+  <form data-settings autocomplete="off">
+    <label>CORS proxy <span class="hint">(optional)</span>
+      <input type="url" name="proxy" placeholder="https://your-proxy.example.workers.dev/?url={url}">
+    </label>
+    <p class="hint">Some services, arXiv among them, do not answer pages on other websites directly.
+      The app then tries public CORS proxies, which can be slow or down. For a reliable route, put your own proxy here;
+      <code>{url}</code> is replaced by the encoded address. A five-line Cloudflare Worker is enough:</p>
+    <pre class="code">export default { async fetch(req) {
+  const url = new URL(req.url).searchParams.get('url');
+  const r = await fetch(url, { headers: { 'User-Agent': 'literature-apps' } });
+  const h = new Headers(r.headers); h.set('Access-Control-Allow-Origin', '*');
+  return new Response(r.body, { status: r.status, headers: h });
+} };</pre>
+    {{- if .citation }}
+    <label>Semantic Scholar API key <span class="hint">(optional, avoids rate limits)</span>
+      <input type="password" name="s2key" placeholder="S2 API key">
+    </label>
+    <label>Email for Crossref <span class="hint">(optional, puts you in Crossref's polite pool)</span>
+      <input type="email" name="mailto" placeholder="you@example.org">
+    </label>
+    {{- end }}
+    <p class="hint">Settings are saved in this browser only.</p>
+  </form>
+</details>

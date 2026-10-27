@@ -1,0 +1,17 @@
+{{- /* Top bar for the Writing and Apps pages, built from the main menu
+       (config/_default/menus.yaml). A menu entry with children (Apps) links to
+       its own url here; the HugoBlox navbar shows its children as a dropdown. */ -}}
+{{- $name := site.Params.hugoblox.identity.name -}}
+{{- $here := .RelPermalink -}}
+<nav>
+  <div class="nav-inner">
+    <a class="nav-name" href="{{ "/" | relURL }}">{{ site.Params.hugoblox.header.title | default $name }}<span class="dot">.</span></a>
+    <ul class="nav-links">
+      {{- range site.Menus.main }}
+      {{- $url := .URL | relURL }}
+      {{- $active := and (ne .URL "/") (not (hasPrefix .URL "/#")) (hasPrefix $here $url) }}
+      <li><a{{ if $active }} class="active"{{ end }} href="{{ $url }}">{{ .Name }}</a></li>
+      {{- end }}
+    </ul>
+  </div>
+</nav>

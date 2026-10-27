@@ -1,0 +1,62 @@
+<div data-app="citation-download">
+
+  <section class="block" id="titles">
+    <div class="wrap block-grid">
+      <div class="rail"><span class="num">01</span><h2>Titles</h2></div>
+      <div class="body">
+        <p class="notice" data-handoff hidden></p>
+        <form class="app-form" data-input>
+          <label>Paper titles <span class="hint">(one per line; add a comment after <code>||</code>)</span>
+            <textarea name="titles" rows="8" spellcheck="false" placeholder="Attention is all you need || the transformer paper
+Deep learning with differential privacy || DP-SGD
+Extracting training data from large language models"></textarea>
+          </label>
+          <div class="field-row">
+            <label>File into
+              <select name="topic">
+                <option value="auto">Guess for each paper</option>
+                <option value="nlp">NLPPapers.bib</option>
+                <option value="dp">CoreDPPapers.bib</option>
+                <option value="other">OtherPapers.bib</option>
+              </select>
+            </label>
+            <label>Seconds between papers <input type="number" name="sleep" value="1.5" min="0" step="0.5"></label>
+            <label class="check"><input type="checkbox" name="skip" checked> Skip titles already in my bibliography</label>
+          </div>
+          <div class="row">
+            <button type="submit" class="btn primary" data-run>Fetch BibTeX</button>
+            <label class="btn ghost file-btn">Load a titles file<input type="file" accept=".txt,.md" data-load-titles hidden></label>
+            <span class="hint">For example <code>SearchReport_titles.txt</code> from the Literature Finder or <code>scrape.py</code>.</span>
+          </div>
+        </form>
+        <pre class="log" data-log hidden aria-live="polite"></pre>
+        <div class="side-panels">
+          {{ partial "apps/bib-panel.html" . }}
+          {{ partial "apps/settings.html" (dict "citation" true) }}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="entries" data-results hidden>
+    <div class="wrap block-grid">
+      <div class="rail"><span class="num">02</span><h2>BibTeX</h2></div>
+      <div class="body">
+        <div class="downloads" data-downloads>
+          <p class="small" data-summary></p>
+          <div class="row">
+            <button type="button" class="btn" data-dl="nlp">NLPPapers.bib</button>
+            <button type="button" class="btn" data-dl="dp">CoreDPPapers.bib</button>
+            <button type="button" class="btn" data-dl="other">OtherPapers.bib</button>
+            <button type="button" class="btn primary" data-dl="all">All entries (.bib)</button>
+            <button type="button" class="btn" data-dl="copy">Copy all</button>
+            <button type="button" class="btn" data-dl="report">Review notes (.json)</button>
+            <button type="button" class="link-btn" data-dl="clear">clear</button>
+          </div>
+          <p class="hint">Each file button downloads only the new entries for that file, to paste at the end of it. Then run <code>./update.sh</code>.</p>
+        </div>
+        <div class="cites" data-list></div>
+      </div>
+    </div>
+  </section>
+</div>

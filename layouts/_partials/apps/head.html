@@ -1,0 +1,38 @@
+{{- $name := site.Params.hugoblox.identity.name -}}
+{{- $title := cond .IsPage (printf "%s — Apps — %s" .Title $name) (printf "Apps — %s" $name) -}}
+{{- $description := .Description | default .Params.summary | default (.Summary | plainify | truncate 160) | strings.TrimSpace -}}
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ $title }}</title>
+<meta name="description" content="{{ $description }}">
+<meta name="author" content="{{ $name }}">
+<link rel="canonical" href="{{ .Permalink }}">
+{{ with resources.Get "media/icon.png" }}
+<link rel="icon" type="image/png" href="{{ (.Fill "32x32 Center").RelPermalink }}">
+<link rel="apple-touch-icon" href="{{ (.Fill "180x180 Center").RelPermalink }}">
+{{ end }}
+<meta property="og:site_name" content="{{ $name }}">
+<meta property="og:type" content="website">
+<meta property="og:url" content="{{ .Permalink }}">
+<meta property="og:title" content="{{ $title }}">
+<meta property="og:description" content="{{ $description }}">
+{{ with resources.Get "media/sharing.jpg" }}<meta property="og:image" content="{{ .Permalink }}">{{ end }}
+<meta name="twitter:card" content="summary">
+{{- if .IsPage }}
+<script type="application/ld+json">{{ dict
+    "@context" "https://schema.org"
+    "@type" "WebApplication"
+    "name" .Title
+    "description" $description
+    "url" .Permalink
+    "applicationCategory" "ResearchApplication"
+    "operatingSystem" "Any (runs in the browser)"
+    "offers" (dict "@type" "Offer" "price" "0")
+    "author" (dict "@type" "Person" "@id" (printf "%s#person" site.Home.Permalink) "name" $name "url" site.Home.Permalink)
+  | jsonify | safeJS }}</script>
+{{- end }}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500;600;700;800&family=Noto+Sans+Bengali:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ "writing/style.css" | relURL }}">
+<link rel="stylesheet" href="{{ "apps/apps.css" | relURL }}">

@@ -1,0 +1,87 @@
+{{- $cite := site.GetPage "/apps/citation-download" -}}
+<div data-app="literature-finder" data-citation-url="{{ with $cite }}{{ .RelPermalink }}{{ end }}">
+
+  <section class="block" id="search">
+    <div class="wrap block-grid">
+      <div class="rail"><span class="num">01</span><h2>Search</h2></div>
+      <div class="body">
+        <form class="app-form" data-search>
+          <fieldset>
+            <legend>Topics <button type="button" class="link-btn" data-all-topics>all / none</button></legend>
+            <div class="toggles" data-topics></div>
+          </fieldset>
+
+          <details class="custom">
+            <summary>Add your own query</summary>
+            <label>arXiv query <span class="hint">(searched in title and abstract; AND, OR and "quoted phrases" work)</span>
+              <input type="text" name="query" placeholder='"language model" AND (watermark OR watermarking)'>
+            </label>
+            <div class="field-row">
+              <label>Relevance keywords <span class="hint">(comma separated; default: the query's words)</span>
+                <input type="text" name="keywords" placeholder="watermark, detection, robustness">
+              </label>
+              <label>Suggested file
+                <select name="bib"><option>NLPPapers.bib</option><option>CoreDPPapers.bib</option><option>OtherPapers.bib</option></select>
+              </label>
+            </div>
+          </details>
+
+          <div class="field-row">
+            <label>Submitted since <input type="date" name="from" required></label>
+            <label>Results per query <input type="number" name="max" value="200" min="1" max="2000" step="1"></label>
+            <label>Minimum relevance <input type="number" name="minrel" value="5" min="0" step="1"></label>
+          </div>
+          <div class="row">
+            <button type="submit" class="btn primary" data-run>Search arXiv</button>
+            <label class="btn ghost file-btn">Open a report<input type="file" accept=".json,.csv" data-open hidden></label>
+            <span class="hint">Opens <code>SearchReport.json</code> or <code>SearchReport_with_abstract.csv</code> from <code>scrape.py</code>.</span>
+          </div>
+          <p class="hint">arXiv asks for one request every three seconds, so a search of all topics takes a minute or two.</p>
+        </form>
+        <pre class="log" data-log hidden aria-live="polite"></pre>
+        <div class="side-panels">
+          {{ partial "apps/bib-panel.html" . }}
+          {{ partial "apps/settings.html" (dict "citation" false) }}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="results" data-explorer hidden>
+    <div class="wrap block-grid">
+      <div class="rail"><span class="num">02</span><h2>Explore</h2></div>
+      <div class="body">
+        <p class="meta small" data-meta></p>
+        <form class="toolbar" data-tools>
+          <input type="search" name="q" placeholder="Filter by title, author, abstract or arXiv id" aria-label="Filter">
+          <label>Min. relevance <input type="number" name="minrel" min="0" step="1" value="5"></label>
+          <label>Sort <select name="sort">
+            <option value="relevance">Relevance</option><option value="newest">Newest</option>
+            <option value="oldest">Oldest</option><option value="title">Title</option></select></label>
+          <label class="check"><input type="checkbox" name="expand"> Open all abstracts</label>
+          <label class="check"><input type="checkbox" name="hideknown" checked> Hide papers I have</label>
+        </form>
+        <div class="topic-filter" data-topic-filter></div>
+
+        <div class="downloads" data-downloads>
+          <div class="row">
+            <span class="small" data-count></span>
+            <button type="button" class="link-btn" data-select-shown>select all shown</button>
+            <button type="button" class="link-btn" data-select-none>clear selection</button>
+          </div>
+          <div class="row">
+            <button type="button" class="btn" data-dl="csv">CSV with abstracts</button>
+            <button type="button" class="btn" data-dl="csv-short">CSV without abstracts</button>
+            <button type="button" class="btn" data-dl="titles">Titles (.txt)</button>
+            <button type="button" class="btn" data-dl="json">Full report (.json)</button>
+            <button type="button" class="btn primary" data-dl="cite">Get BibTeX →</button>
+          </div>
+          <p class="hint" data-scope></p>
+        </div>
+
+        <div class="papers" data-list></div>
+        <button type="button" class="btn ghost more" data-more hidden></button>
+      </div>
+    </div>
+  </section>
+</div>

@@ -1,0 +1,11 @@
+{{- /* "Your bibliography": .bib files the visitor loads, so known papers are skipped (common.js bibPanel) */ -}}
+<div class="panel" data-bib-panel>
+  <p class="panel-head">Your bibliography</p>
+  <p class="small" data-bib-status></p>
+  <div class="row">
+    <label class="btn ghost file-btn">Load .bib files<input type="file" accept=".bib,.txt" multiple data-bib-input hidden></label>
+    <button type="button" class="btn ghost" data-bib-forget hidden>Forget</button>
+  </div>
+  <p class="hint">For example <code>NLPPapers.bib</code>, <code>CoreDPPapers.bib</code> and <code>OtherPapers.bib</code>.
+    Only the titles and keys are kept, in this browser.</p>
+</div>

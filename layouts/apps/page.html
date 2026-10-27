@@ -1,0 +1,32 @@
+{{- $name := site.Params.hugoblox.identity.name -}}
+<!DOCTYPE html>
+<html lang="{{ site.Language.LanguageCode }}">
+<head>
+{{ partial "apps/head.html" . }}
+</head>
+<body class="app-page">
+
+{{ partial "writing/nav.html" . }}
+
+<header class="hero">
+  <div class="hero-inner single">
+    <div>
+      <p class="eyebrow"><a href="{{ .Parent.RelPermalink }}">Apps</a> · {{ printf "%02d" .Weight }}</p>
+      <h1>{{ .Title }}<span class="caret"></span></h1>
+      {{ with .Content }}<div class="lede">{{ . }}</div>{{ end }}
+    </div>
+  </div>
+</header>
+
+<main>
+  {{ partial (printf "apps/%s.html" .Params.app) . }}
+</main>
+
+<footer class="plain">
+  <div>© {{ now.Year }} {{ $name }}. These apps run in your browser; what you type is not sent to this website.</div>
+</footer>
+
+<script src="{{ "apps/common.js" | relURL }}"></script>
+<script src="{{ printf "apps/%s.js" .Params.app | relURL }}"></script>
+</body>
+</html>
