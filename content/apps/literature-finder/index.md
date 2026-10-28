@@ -1,6 +1,7 @@
 ---
 title: Literature Finder
 weight: 1
+group: Literature
 app: literature-finder
 summary: Search arXiv for recent papers on my research topics, rank them by relevance and explore the results.
 steps: [Pick topics, Search arXiv, Read abstracts, Download the report]

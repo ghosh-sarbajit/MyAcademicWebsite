@@ -27,6 +27,10 @@ main:
     parent: apps
     url: apps/citation-download/
     weight: 2
+  - name: Conference Dates
+    parent: apps
+    url: apps/conference-dates/
+    weight: 3
   - name: All apps
     parent: apps
     url: apps/

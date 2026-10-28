@@ -19,13 +19,13 @@ workflow builds the site and publishes it.
 | Publications | `content/publications/<paper>/index.md` + `cite.bib` |
 | Writing (essays) | `content/writing/<post>/index.md` |
 | Writing page design | `layouts/writing/`, `static/writing/style.css` |
-| Apps (Literature Finder, Citation Download) | `content/apps/`, `layouts/apps/`, `layouts/_partials/apps/`, `static/apps/` |
+| Apps (Literature Finder, Citation Download, Conference Dates) | `content/apps/`, `layouts/apps/`, `layouts/_partials/apps/`, `static/apps/` |
 | Site name, SEO, theme | `config/_default/params.yaml` |
 | Navigation menu | `config/_default/menus.yaml` |
 
 ## Apps
 
-The **Apps** menu holds two tools that run entirely in the visitor's browser; they are JavaScript versions of
+The **Apps** menu holds three tools that run entirely in the visitor's browser. The first two are JavaScript versions of
 `scrape.py` and `citationDownload.py` from [MyBibliography](https://github.com/ghosh-sarbajit/MyBibliography):
 
 - **Literature Finder** (`static/apps/literature-finder.js`) searches arXiv for recent papers on the topics in `TOPICS`
@@ -35,6 +35,12 @@ The **Apps** menu holds two tools that run entirely in the visitor's browser; th
 - **Citation Download** (`static/apps/citation-download.js`) turns titles into BibTeX in the bibliography's style
   (DBLP, OpenReview, Crossref, Semantic Scholar, arXiv, OpenAlex, PMLR, NeurIPS; not Google Scholar) and downloads the
   new entries per topic file. "Get BibTeX" in the Literature Finder hands the selected titles over.
+
+- **Conference Dates** (`static/apps/conference-dates.js`) shows the next edition of twelve CORE A*/A security
+  conferences (the list is `CONFERENCES` in the script): dates, place, submission deadlines and days left. It reads
+  `_data/conferences.yml` from the community-maintained [sec-deadlines.github.io](https://sec-deadlines.github.io) list
+  ([repository](https://github.com/sec-deadlines/sec-deadlines.github.io)) each time it opens, so new editions need no
+  change here; missing or wrong dates are fixed with a pull request to that repository.
 
 Visitors can load their `.bib` files so known papers are skipped; only titles and keys are kept, in their browser.
 Services that do not allow cross-site requests are reached through public CORS proxies, or a proxy set under *Settings*.

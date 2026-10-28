@@ -1,0 +1,35 @@
+<div data-app="conference-dates">
+
+  <section class="block" id="upcoming">
+    <div class="wrap block-grid">
+      <div class="rail"><span class="num">01</span><h2>Upcoming</h2></div>
+      <div class="body">
+        <form class="toolbar" data-tools>
+          <label>CORE rank <select name="rank">
+            <option value="all">A* and A</option><option value="A*">A* only</option><option value="A">A only</option></select></label>
+          <label>Sort by <select name="sort">
+            <option value="date">Conference date</option><option value="deadline">Next deadline</option></select></label>
+        </form>
+        <p class="meta small" data-meta aria-live="polite">Reading the community list…</p>
+        <div class="confs" data-list></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="source">
+    <div class="wrap block-grid">
+      <div class="rail"><span class="num">02</span><h2>Source</h2></div>
+      <div class="body">
+        <p>The dates come from <a href="https://sec-deadlines.github.io" target="_blank" rel="noopener">Security and Privacy Deadlines</a>
+          (<a href="https://sec-deadlines.github.io" target="_blank" rel="noopener">sec-deadlines.github.io</a>), a list kept up to date by the security and privacy community.
+          This page reads its data file,
+          <a href="https://github.com/sec-deadlines/sec-deadlines.github.io/blob/master/_data/conferences.yml" target="_blank" rel="noopener"><code>_data/conferences.yml</code></a>,
+          each time it opens, so a new edition appears here as soon as it is added there.</p>
+        <p>If a date is missing or wrong, anyone can correct it with a pull request to
+          <a href="https://github.com/sec-deadlines/sec-deadlines.github.io" target="_blank" rel="noopener">github.com/sec-deadlines/sec-deadlines.github.io</a>.</p>
+        <p class="hint">Deadlines are Anywhere on Earth (AoE, UTC−12) unless another time zone is shown, and also given in your own time.
+          Check the conference website before you submit.</p>
+      </div>
+    </div>
+  </section>
+</div>

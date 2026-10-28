@@ -19,13 +19,20 @@
 </header>
 
 <main>
-  <section class="block" id="apps">
+  {{- $notes := dict
+      "Literature" `Both apps run in your browser: nothing is installed and nothing is sent to this website.
+          They are the web versions of <code>scrape.py</code> and <code>citationDownload.py</code> from my bibliography scripts.`
+      "Conferences" `The dates come from the community-maintained <a href="https://sec-deadlines.github.io">Security and Privacy Deadlines</a> list.` -}}
+  {{ range $g := slice "Literature" "Conferences" }}
+  {{- $pages := where $.Pages.ByWeight "Params.group" $g }}
+  {{- with $pages }}
+  <section class="block" id="{{ lower $g }}">
     <div class="wrap block-grid">
-      <div class="rail reveal"><h2>Literature</h2></div>
+      <div class="rail reveal"><h2>{{ $g }}</h2></div>
       <div class="body reveal app-index">
-        {{ range $i, $p := .Pages.ByWeight }}
+        {{ range $p := . }}
         <a class="app-card" href="{{ $p.RelPermalink }}">
-          <span class="app-num">{{ printf "%02d" (add $i 1) }}</span>
+          <span class="app-num">{{ printf "%02d" $p.Weight }}</span>
           <span class="app-text">
             <span class="app-name">{{ $p.Title }}</span>
             <span class="app-sum">{{ $p.Params.summary }}</span>
@@ -34,11 +41,12 @@
           <span class="app-go" aria-hidden="true">❯</span>
         </a>
         {{ end }}
-        <p class="note-small">Both apps run in your browser: nothing is installed and nothing is sent to this website.
-          They are the web versions of <code>scrape.py</code> and <code>citationDownload.py</code> from my bibliography scripts.</p>
+        <p class="note-small">{{ index $notes $g | safeHTML }}</p>
       </div>
     </div>
   </section>
+  {{- end }}
+  {{ end }}
 </main>
 
 <footer>
