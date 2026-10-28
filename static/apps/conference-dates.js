@@ -157,6 +157,33 @@
     return { ms, date: new Date(y, mo - 1, d), time: `${String(h).padStart(2, '0')}:${m[5] || '59'}` };
   }
 
+  // The list has no field for abstract deadlines; they are in the comment, as
+  // "Abstract registration required (1 week before deadline AoE)" or with a date,
+  // "Mandatory abstract submission deadline January 8, 2027 (AoE)".
+  // -> [{ms, date, time, paper}], each tied to the paper deadline it comes before
+  function abstractDeadlines(text, papers, year, zone) {
+    if (!/abstract/i.test(text) || !papers.length) return [];
+    const iso = d => `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
+    const before = text.match(/\b(\d+|one|two)\s+(week|day)s?\s+before/i);
+    if (before) {
+      const n = /^\d+$/.test(before[1]) ? +before[1] : before[1].toLowerCase() === 'one' ? 1 : 2;
+      const back = n * (/week/i.test(before[2]) ? 7 : 1);
+      return papers.map(p => {
+        const d = new Date(p.date.getFullYear(), p.date.getMonth(), p.date.getDate() - back);
+        return Object.assign(deadline(`${iso(d)} ${p.time}`, year, zone), { paper: p });
+      });
+    }
+    const on = text.match(/\b(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.?\s+(\d{1,2})(?:st|nd|rd|th)?\b(?:,?\s+(\d{4}))?/i);
+    if (!on) return [];
+    const years = on[3] ? [+on[3]] : [year, year - 1];
+    for (const y of years) {
+      const a = deadline(`${y}-${MONTHS.indexOf(on[1].toLowerCase()) + 1}-${on[2]} 23:59`, year, zone);
+      const paper = a && papers.find(p => p.ms >= a.ms);
+      if (paper && paper.ms - a.ms <= 60 * DAY) return [Object.assign(a, { paper })];
+    }
+    return [];
+  }
+
   function zoneLabel(zone) {
     if (zone === AOE) return 'AoE';
     if (/^(Etc\/)?(UTC|GMT)$/.test(zone)) return 'UTC';
@@ -176,11 +203,13 @@
     else status = year < today.getFullYear() ? 'over' : 'upcoming';
     const deadlines = (Array.isArray(e.deadline) ? e.deadline : [e.deadline])
       .map(d => deadline(d, year, zone)).filter(Boolean).sort((a, b) => a.ms - b.ms);
+    const abstracts = abstractDeadlines([e.comment, e.note].filter(Boolean).join(' '), deadlines, year, zone);
+    const next = deadlines.find(d => d.ms > now.getTime()) || null;
     return {
       record: e, year, zone, days, status,
       startsIn: days ? Math.round((days.start - today) / DAY) : null,
-      deadlines,
-      next: deadlines.find(d => d.ms > now.getTime()) || null,
+      deadlines, abstracts, next,
+      nextAbstract: next && abstracts.find(a => a.paper === next) || null,
       when: days ? whenText(e.date, year) : 'Dates not announced yet',
     };
   }
@@ -205,7 +234,18 @@
     });
   }
 
-  const core = { CONFERENCES, parseList, stripComment, conferenceDays, deadline, zoneLabel, edition, conferences, dblpKey };
+  // time left until ms: "12 days", "5 hours", "less than an hour"
+  function timeLeft(ms, now) {
+    const t = ms - now, d = Math.floor(t / DAY), h = Math.floor(t / 36e5);
+    if (d >= 1) return { n: d, unit: d === 1 ? 'day' : 'days' };
+    if (h >= 1) return { n: h, unit: h === 1 ? 'hour' : 'hours' };
+    return { n: '<1', unit: 'hour' };
+  }
+
+  const core = {
+    CONFERENCES, parseList, stripComment, conferenceDays, deadline, abstractDeadlines, zoneLabel,
+    edition, conferences, dblpKey, timeLeft,
+  };
   if (typeof module !== 'undefined' && module.exports) { module.exports = core; return; }
 
   // ------------------------------------------------------------------ page
@@ -225,13 +265,27 @@
     return n === 0 ? 'today' : n === 1 ? 'tomorrow' : `in ${n} days`;
   }
 
-  function deadlineItem(d, x, now) {
-    const zone = zoneLabel(x.zone);
-    if (d.ms <= now) return `<li class="done">${esc(fmtDay(d.date))}, ${esc(d.time)} ${esc(zone)}</li>`;
-    const left = Math.max(0, Math.ceil((d.ms - now) / DAY));
-    return `<li${d === x.next ? ' class="next"' : ''}>${esc(fmtDay(d.date))}, ${esc(d.time)} ${esc(zone)}
-      · <b>${left <= 1 ? 'less than ' + (left ? 'a day' : 'an hour') : left + ' days'} left</b>
+  // one deadline in the list; `kind` is "Abstract" or "Paper" when the conference has both
+  function deadlineItem(d, x, now, kind) {
+    const zone = zoneLabel(x.zone), label = kind ? `<span class="kind">${kind}</span> ` : '';
+    const when = `${esc(fmtDay(d.date))}, ${esc(d.time)} ${esc(zone)}`;
+    if (d.ms <= now) return `<li class="done">${label}${when}</li>`;
+    const t = timeLeft(d.ms, now);
+    const next = d === x.next || d === x.nextAbstract;
+    return `<li${next ? ' class="next"' : ''}>${label}${when}
+      · <b>${esc(t.n)} ${t.unit} left</b>
       <span class="hint">(your time: ${esc(fmtLocal(d.ms))})</span></li>`;
+  }
+
+  // the big numbers on the right: time left to register the abstract and to submit
+  function countdown(x, now) {
+    if (!x.next) return '<div class="count"><div class="score closed"><b>—</b><span>submissions <br>closed</span></div></div>';
+    const box = (d, what) => {
+      if (d.ms <= now) return `<div class="score closed"><b>—</b><span>${what} <br>closed</span></div>`;
+      const t = timeLeft(d.ms, now);
+      return `<div class="score"><b>${esc(t.n)}</b><span>${t.unit} to <br>${what}</span></div>`;
+    };
+    return `<div class="count" title="Time left until the next deadline">${x.nextAbstract ? box(x.nextAbstract, 'abstract') : ''}${box(x.next, 'submit')}</div>`;
   }
 
   function card(c, now) {
@@ -256,10 +310,13 @@
     }
 
     const e = x.record;
-    const count = x.status === 'now' ? '<b>now</b><span>on</span>'
-      : x.startsIn != null ? `<b>${x.startsIn}</b><span>${x.startsIn === 1 ? 'day' : 'days'}</span>` : '<b>?</b><span>days</span>';
+    const both = x.abstracts.length > 0;
+    const items = x.deadlines.flatMap(d => [
+      ...x.abstracts.filter(a => a.paper === d).map(a => deadlineItem(a, x, now.getTime(), 'Abstract')),
+      deadlineItem(d, x, now.getTime(), both ? 'Paper' : ''),
+    ]);
     const deadlines = x.deadlines.length
-      ? `<ul class="deadlines">${x.deadlines.map(d => deadlineItem(d, x, now.getTime())).join('')}</ul>
+      ? `<ul class="deadlines">${items.join('')}</ul>
          ${x.next ? '' : '<p class="hint">All listed deadlines have passed.</p>'}`
       : '';
     const later = c.later.map(l => `${esc(c.short)} ${l.year}: ${esc(l.when)}${l.record.place ? ', ' + esc(l.record.place) : ''}`);
@@ -274,7 +331,7 @@
         ${later.length ? `<p class="hint">Also listed: ${later.join('; ')}.</p>` : ''}
         <p class="paper-links">${links.join('')}</p>
       </div>
-      <div class="score" title="Days until the conference starts">${count}</div>
+      ${countdown(x, now.getTime())}
     </article>`;
   }
 
@@ -283,7 +340,7 @@
     const rank = tools.rank.value, sort = tools.sort.value;
     const all = conferences(state.records, now).filter(c => rank === 'all' || c.rank === rank);
     const key = c => sort === 'deadline'
-      ? (c.current && c.current.next ? c.current.next.ms : Infinity)
+      ? (c.current && c.current.next ? Math.min(...[c.current.nextAbstract, c.current.next].filter(d => d && d.ms > now).map(d => d.ms)) : Infinity)
       : (c.current ? (c.current.days ? +c.current.days.start : new Date(c.current.year, 11, 31).getTime()) : Infinity);
     const coming = all.filter(c => c.current).sort((a, b) => key(a) - key(b));
     const waiting = all.filter(c => !c.current);

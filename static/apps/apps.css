@@ -229,6 +229,11 @@ ul.deadlines{list-style:none;margin:0 0 8px;padding:0;font-size:.92rem;}
 ul.deadlines li{padding:3px 0 3px 12px;border-left:2px solid var(--rule);}
 ul.deadlines li.next{border-left-color:var(--accent);}
 ul.deadlines li.done{color:var(--muted);text-decoration:line-through;}
+.count{display:flex;flex-direction:column;gap:14px;}
+.count .score{min-width:72px;}
+.count .score span{text-align:center;line-height:1.3;}
+.count .score.closed b{color:var(--muted);}
+.kind{font-family:var(--mono);font-size:.7rem;color:var(--muted);display:inline-block;min-width:62px;}
 .conf.waiting .pub-title,.conf.waiting .conf-full,.conf.waiting .conf-when{color:var(--muted);}
 .waiting-head{margin-top:28px!important;}
 .warn-text{color:#8a5a00;}
@@ -244,7 +249,10 @@ ul.fallback li{margin-bottom:6px;}
   .app-page .wrap{padding:0 16px;}
   .paper{grid-template-columns:auto 1fr;}
   .conf{grid-template-columns:1fr;}
-  .conf .score{grid-column:1;}
+  .conf .count{grid-row:1;flex-direction:row;gap:18px;}
+  .count .score{flex-direction:column;align-items:flex-start;min-width:0;}
+  .count .score span{text-align:left;}
+  .count .score span br{display:none;}
   .score{grid-column:2;flex-direction:row;gap:6px;align-items:baseline;min-width:0;padding:0;order:-1;justify-content:flex-start;}
   .score span{margin:0;}
   .cite-controls{grid-template-columns:1fr;}
