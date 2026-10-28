@@ -6,18 +6,33 @@
 <script>document.documentElement.classList.add('js')</script>
 {{ partial "writing/head.html" . }}
 </head>
-<body>
-
-<main class="deck" style="--bg: url('{{ .RelPermalink }}pictures/background.jpg')">
-{{ partial (printf "writing/decks/%s.html" .Params.deck) . }}
-</main>
+<body style="--bg: url('{{ .RelPermalink }}pictures/background.jpg')">
 
 <nav class="bar">
+  <button type="button" class="js-only" data-go="side" aria-pressed="true" aria-controls="side" title="Show or hide the sidebar">☰</button>
   <a href="{{ .Parent.RelPermalink }}">← Writing</a>
   <span class="grow"></span>
-  <button type="button" class="js-only" data-go="prev" aria-label="Previous">‹</button>
-  <button type="button" class="js-only" data-go="next" aria-label="Next">›</button>
+  <button type="button" class="js-only" data-go="prev" aria-label="Previous" title="Previous (←)">‹</button>
+  <label class="page js-only"><span class="hide-small">Page</span> <input type="number" min="1" inputmode="numeric" aria-label="Page number"> <span data-total></span></label>
+  <button type="button" class="js-only" data-go="next" aria-label="Next" title="Next (→)">›</button>
+  <span class="grow"></span>
+  <button type="button" class="js-only" data-go="full" title="Full screen (F)">⛶<span class="hide-small"> Full screen</span></button>
 </nav>
+
+<div class="viewer">
+  <aside class="side js-only" id="side" hidden>
+    <div class="tabs" role="tablist">
+      <button type="button" role="tab" aria-selected="true" aria-controls="thumbs" id="tab-thumbs">Pages</button>
+      <button type="button" role="tab" aria-selected="false" aria-controls="outline" id="tab-outline">Outline</button>
+    </div>
+    <div class="panel" id="thumbs" role="tabpanel" aria-labelledby="tab-thumbs"></div>
+    <div class="panel" id="outline" role="tabpanel" aria-labelledby="tab-outline" hidden><ul class="outline"></ul></div>
+  </aside>
+
+  <main class="deck">
+{{ partial (printf "writing/decks/%s.html" .Params.deck) . }}
+  </main>
+</div>
 
 <script src="{{ "writing/slides/slides.js" | relURL }}"></script>
 </body>
