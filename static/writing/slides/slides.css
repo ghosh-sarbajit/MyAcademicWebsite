@@ -1,0 +1,147 @@
+/* Slides converted from Beamer (theme Singapore, 11pt, 16:9).
+   Sizes are Beamer's own, in points of the 453.54pt x 255.12pt page:
+   --pt scales them to the width of the slide. */
+
+@font-face { font-family: "LM Sans"; src: url("fonts/lmsans10-regular.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: "LM Sans"; src: url("fonts/lmsans10-bold.woff2") format("woff2"); font-weight: 700; font-style: normal; font-display: swap; }
+@font-face { font-family: "LM Sans"; src: url("fonts/lmsans10-oblique.woff2") format("woff2"); font-weight: 400; font-style: italic; font-display: swap; }
+@font-face { font-family: "LM Sans"; src: url("fonts/lmsans10-boldoblique.woff2") format("woff2"); font-weight: 700; font-style: italic; font-display: swap; }
+@font-face { font-family: "LM Math"; src: url("fonts/latinmodern-math.woff2") format("woff2"); font-display: swap; }
+
+:root {
+  --structure: #3333b3;  /* beamer structure colour, rgb(0.2,0.2,0.7) */
+  --structure65: #7a7acd;
+  --page: #e9e9ec;
+  --bar: #55555f;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--page); color: #000; font-family: "LM Sans", "Latin Modern Sans", "CMU Sans Serif", Helvetica, Arial, sans-serif; }
+
+/* ---------- Without JavaScript: every slide, one under another ---------- */
+.deck { container-type: inline-size; width: min(100% - 32px, 1100px); margin: 16px auto; }
+.frame { margin-bottom: 16px; box-shadow: 0 1px 4px rgba(0,0,0,.25); }
+
+/* ---------- With JavaScript: one slide at a time ---------- */
+.js body { height: 100vh; height: 100dvh; overflow: hidden; display: flex; flex-direction: column; }
+.js .deck { flex: 1; min-height: 0; width: 100%; margin: 0; display: grid; place-items: center; container-type: size; }
+.js .frame { --pt: calc(min(100cqw, 100cqh * 453.54 / 255.12) / 453.54); display: none; margin: 0; width: calc(453.54 * var(--pt)); }
+.js .frame.on { display: flex; }
+.js [data-s].later { visibility: hidden; }
+
+.bar { display: flex; align-items: center; gap: 12px; padding: 6px 16px; font: 14px/1.2 system-ui, sans-serif; color: var(--bar); }
+.bar a { color: inherit; }
+.bar .grow { flex: 1; }
+.bar button { font: inherit; color: inherit; background: #fff; border: 1px solid #c8c8d0; border-radius: 4px; padding: 3px 12px; cursor: pointer; }
+.bar button:disabled { opacity: .4; cursor: default; }
+html:not(.js) .bar .js-only { display: none; }
+
+/* ---------- The slide ---------- */
+.frame {
+  --pt: calc(100cqw / 453.54);
+  position: relative; isolation: isolate;
+  display: flex; flex-direction: column;
+  aspect-ratio: 453.54 / 255.12;
+  background: #fff; overflow: hidden;
+  font-size: calc(10.95 * var(--pt)); line-height: 1.22;
+}
+/* \usebackgroundtemplate: the picture at 5% opacity */
+.frame::before { content: ""; position: absolute; inset: 0; z-index: -1; background: var(--bg) center / 100% 100% no-repeat; opacity: .05; }
+
+.ft { margin: 0; padding: calc(8 * var(--pt)) calc(28.45 * var(--pt)) 0; text-align: center; color: var(--structure); font-size: calc(14.4 * var(--pt)); font-weight: 400; line-height: 1.2; }
+.fb { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 0 calc(28.45 * var(--pt)); min-height: 0; }
+.fb.top { justify-content: flex-start; padding-top: calc(12 * var(--pt)); }
+.fnum { position: absolute; right: calc(6 * var(--pt)); bottom: calc(3 * var(--pt)); font-size: calc(6 * var(--pt)); }
+
+.fb p { margin: 0; }
+.b { color: #00f; }
+.r { color: #f00; }
+.g { color: #0f0; }
+sup { font-size: 70%; line-height: 0; }
+
+/* Title page and the large red section slides */
+.title-page .fb { align-items: center; text-align: center; padding-bottom: calc(14 * var(--pt)); }
+.title-page .title { color: var(--structure); font-size: calc(14.4 * var(--pt)); }
+.title-page .author { font-size: calc(12 * var(--pt)); margin-top: calc(18 * var(--pt)); }
+.huge { text-align: center; font-size: calc(24.88 * var(--pt)); }
+
+/* \tableofcontents */
+.toc { list-style: none; margin: 0; padding: 0; color: var(--structure); display: grid; gap: calc(16 * var(--pt)); }
+
+/* itemize: Singapore uses dots */
+.fb ul, .fb ol { margin: 0; padding: 0; list-style: none; }
+.fb li { position: relative; margin: calc(3 * var(--pt)) 0; }
+.fb ul > li { padding-left: calc(22 * var(--pt)); }
+.fb ul > li::before { content: ""; position: absolute; left: calc(11.5 * var(--pt)); top: calc(.62em - 2.2 * var(--pt)); width: calc(4.4 * var(--pt)); height: calc(4.4 * var(--pt)); border-radius: 50%; background: var(--structure); }
+.fb li ul { font-size: calc(10 / 10.95 * 1em); margin: calc(1 * var(--pt)) 0; }
+.fb li ul > li { padding-left: calc(18 * var(--pt)); margin: calc(1 * var(--pt)) 0; }
+.fb li ul > li::before { left: calc(10 * var(--pt)); width: calc(3.4 * var(--pt)); height: calc(3.4 * var(--pt)); top: calc(.62em - 1.7 * var(--pt)); }
+
+/* enumerate */
+.fb ol:not(.toc):not(.bib):not(.lines) { counter-reset: n; }
+.fb ol:not(.toc):not(.bib):not(.lines) > li { counter-increment: n; padding-left: calc(22 * var(--pt)); }
+.fb ol:not(.toc):not(.bib):not(.lines) > li::before { content: counter(n) "."; position: absolute; right: calc(100% - 18 * var(--pt)); color: var(--structure); }
+
+/* figures */
+figure { margin: calc(6 * var(--pt)) 0; text-align: center; }
+figure img { width: calc(var(--w) * var(--pt)); height: auto; vertical-align: top; }
+figcaption { font-size: calc(10 * var(--pt)); margin-top: calc(4 * var(--pt)); }
+.cn { color: var(--structure); }
+
+/* columns */
+.cols { display: flex; align-items: center; }
+.col { flex: 0 0 calc(var(--c) * 100%); }
+.col figure { margin: 0; }
+.col figcaption { text-align: left; }
+
+/* display maths */
+math { font-family: "LM Math", "Latin Modern Math", math; }
+math[display="block"] { margin: calc(8 * var(--pt)) 0; }
+
+/* a slide as full as the original: lists without extra spacing */
+.tight .ft { padding-top: calc(3 * var(--pt)); }
+.tight .fb li, .tight .fb li ul > li { margin: 0; }
+.tight math[display="block"] { margin: calc(3 * var(--pt)) 0; }
+.tight .fn { margin-bottom: calc(4 * var(--pt)); }
+
+/* footnotes */
+.fn { margin: 0 calc(28.45 * var(--pt)) calc(12 * var(--pt)); font-size: calc(9 * var(--pt)); line-height: 1.25; }
+.fn::before { content: ""; display: block; width: 40%; border-top: calc(.4 * var(--pt)) solid #000; margin-bottom: calc(2 * var(--pt)); }
+.fn p { margin: 0; }
+.fn sup { display: inline-block; min-width: calc(10.5 * var(--pt)); text-align: right; font-size: 70%; line-height: 1; vertical-align: super; }
+
+/* \printbibliography */
+.bib { margin: 0; padding: 0; list-style: none; word-spacing: -.1em; }
+.bib li { position: relative; padding-left: calc(28 * var(--pt)); margin: 0 0 calc(5 * var(--pt)); }
+.bib .bl { position: absolute; left: 0; color: var(--structure); }
+.ba { color: var(--structure); }
+.bv { color: var(--structure65); }
+
+/* algorithm (algpseudocode) */
+.algo { margin-top: calc(8 * var(--pt)); border-top: calc(.8 * var(--pt)) solid #000; border-bottom: calc(.8 * var(--pt)) solid #000; font-size: 1em; }
+.algo-cap { border-bottom: calc(.4 * var(--pt)) solid #000; padding: calc(1 * var(--pt)) 0; }
+.fb .algo ol { counter-reset: line; padding: calc(1 * var(--pt)) 0 calc(2 * var(--pt)); }
+.fb .algo li { counter-increment: line; margin: 0; padding-left: calc(17 * var(--pt)); }
+.fb .algo li::before { content: counter(line) ":"; position: absolute; left: 0; width: calc(10 * var(--pt)); text-align: right; font-size: calc(8 / 10.95 * 1em); top: .25em; }
+.fb .algo li.in { padding-left: calc(28 * var(--pt)); }
+.cm { float: right; }
+
+/* theorem block */
+.thm { margin: calc(6 * var(--pt)) 0; }
+.thm-title { color: var(--structure); font-size: calc(12 / 10.95 * 1em); }
+.thm p:not(.thm-title) { font-style: italic; }
+
+@media (max-width: 600px) {
+  .deck { width: 100%; margin: 0; }
+  .bar { padding: 6px 12px; }
+}
+
+@media print {
+  @page { size: 453.54pt 255.12pt; margin: 0; }
+  .bar { display: none; }
+  .js body { height: auto; overflow: visible; display: block; }
+  .deck, .js .deck { width: 453.54pt; margin: 0; display: block; container-type: inline-size; }
+  .frame, .js .frame { --pt: 1pt; display: flex; width: 453.54pt; box-shadow: none; margin: 0; break-after: page; }
+  .js [data-s].later { visibility: visible; }
+}

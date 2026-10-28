@@ -1,0 +1,24 @@
+{{- /* A slide deck in the writing section: front matter "deck" names the
+       partial in _partials/writing/decks/ that holds the slides. */ -}}
+<!DOCTYPE html>
+<html lang="{{ site.Language.LanguageCode }}">
+<head>
+<script>document.documentElement.classList.add('js')</script>
+{{ partial "writing/head.html" . }}
+</head>
+<body>
+
+<main class="deck" style="--bg: url('{{ .RelPermalink }}pictures/background.jpg')">
+{{ partial (printf "writing/decks/%s.html" .Params.deck) . }}
+</main>
+
+<nav class="bar">
+  <a href="{{ .Parent.RelPermalink }}">← Writing</a>
+  <span class="grow"></span>
+  <button type="button" class="js-only" data-go="prev" aria-label="Previous">‹</button>
+  <button type="button" class="js-only" data-go="next" aria-label="Next">›</button>
+</nav>
+
+<script src="{{ "writing/slides/slides.js" | relURL }}"></script>
+</body>
+</html>

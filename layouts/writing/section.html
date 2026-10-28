@@ -27,7 +27,7 @@
         <div class="pub">
           <h3 class="pub-title"><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
           {{ with .Params.standfirst }}<p class="pub-authors">{{ . }}</p>{{ end }}
-          <span class="pub-venue">{{ with .Params.topic }}{{ . }} · {{ end }}{{ .Date.Format "2 January 2006" }} · {{ .ReadingTime }} min read</span>
+          <span class="pub-venue">{{ with .Params.topic }}{{ . }} · {{ end }}{{ .Date.Format "2 January 2006" }} · {{ if .Params.deck }}Slides{{ else }}{{ .ReadingTime }} min read{{ end }}</span>
         </div>
         {{ else }}
         <p>Nothing here yet.</p>

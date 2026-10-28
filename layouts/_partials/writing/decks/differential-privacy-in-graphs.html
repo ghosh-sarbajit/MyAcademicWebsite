@@ -1,0 +1,652 @@
+<section class="frame title-page">
+  <div class="fb">
+    <p class="title">Differential Privacy in Graphs</p>
+    <p class="author">Sarbajit Ghosh</p>
+  </div>
+  <div class="fnum">1 / 38</div>
+</section>
+
+<section class="frame">
+  <h2 class="ft">Scheme Of The Presentation</h2>
+  <div class="fb">
+    <ol class="toc">
+      <li>Background and Courses</li>
+      <li>Differential Privacy</li>
+      <li>Differential Privacy in Graph</li>
+      <li>Conclusion and Plan for PhD</li>
+    </ol>
+  </div>
+  <div class="fnum">2 / 38</div>
+</section>
+
+<section class="frame">
+  <div class="fb"><p class="huge r">Background and Courses</p></div>
+  <div class="fnum">3 / 38</div>
+</section>
+
+<section class="frame">
+  <h2 class="ft">Background</h2>
+  <div class="fb">
+    <ul>
+      <li><span class="b">MTech</span> from <span class="g">ISI Kolkata</span> in <span class="b">Cryptography and Security</span></li>
+      <li><span class="b">MSc</span> from <span class="g">West Bengal State University</span> in <span class="b">Statistics</span></li>
+    </ul>
+  </div>
+  <div class="fnum">4 / 38</div>
+</section>
+
+<section class="frame">
+  <h2 class="ft">Courses</h2>
+  <div class="fb">
+    <ul>
+      <li>Cyber security of critical infrastructure [CS631]</li>
+      <li>Introduction to Machine Learning [CS771]</li>
+      <li>Malware Analysis and Intrusion Detection [CS658A]</li>
+      <li>Deep Learning for Computer Vision [CS776]</li>
+    </ul>
+  </div>
+  <div class="fnum">5 / 38</div>
+</section>
+
+<section class="frame">
+  <div class="fb"><p class="huge r">Differential Privacy</p></div>
+  <div class="fnum">6 / 38</div>
+</section>
+
+<section class="frame">
+  <h2 class="ft">Motivation</h2>
+  <div class="fb">
+    <ul>
+      <li>Consider a database, containing the private responses of 100 students on their habit of taking tea
+        <figure><img src="pictures/basicSetup.png" alt="Students' database, a trusted curator algorithm with access to the database, and a user (researcher) who sends queries and receives answers" style="--w:174.3"></figure>
+      </li>
+      <li data-s="2">Consider two queries in the database:
+        <ul>
+          <li>What is the total number of students who do take tea?</li>
+          <li>What is the total number of students (excluding row 58) who do take tea?</li>
+        </ul>
+      </li>
+      <li data-s="3"><span class="r">With answers to these queries, analysts can find the private response of the student of row 58</span></li>
+      <li data-s="4"><span class="b"><b>This motivates us to obfuscate answers</b>, <b>before releasing</b>, them so that <span class="b">both answers look identical</span></span></li>
+      <li data-s="5"><span class="r">How much noise to add?</span></li>
+    </ul>
+  </div>
+  <div class="fnum">7 / 38</div>
+</section>
+
+<section class="frame">
+  <h2 class="ft">Quantification of Noise</h2>
+  <div class="fb">
+    <p>One such method proposed, for obfuscating the answer was by <b>Dwork et. al.</b>[4] <sup>1</sup>. The steps are as follows:</p>
+    <ol>
+      <li data-s="2">List out all possible datasets that differ in exactly one row (<span class="b">also called neighboring datasets</span>)</li>
+      <li data-s="3">Evaluate both the query over all possible neighboring datasets</li>
+      <li data-s="4">Calculate the maximum difference evaluated over all possible pairs of <b>neighboring datasets</b> (<span class="b">also called the sensitivity of the query</span>)</li>
+      <li data-s="5">Calibrate the answer to the query before releasing it by adding noise proportional to the sensitivity</li>
+    </ol>
+    <p data-s="6">This technique was coined as <span class="b">Differential Privacy</span> by the authors</p>
+  </div>
+  <div class="fn">
+    <p><sup>1</sup>Cynthia Dwork et al. "Calibrating noise to sensitivity in private data analysis". In: TCC 2006</p>
+  </div>
+  <div class="fnum">8 / 38</div>
+</section>
+
+<section class="frame">
+  <h2 class="ft">Differential Privacy</h2>
+  <div class="fb">
+    <p>Consider the following interactive mechanism to access the database:</p>
+    <figure><img src="pictures/PrivacyDefinition.png" alt="Database D, a trusted curator algorithm A with access to D, and a user (researcher) who sends query q and receives y = Answer + Noise" style="--w:261.45"></figure>
+    <p data-s="2">Also, let <math><mrow><mi class="mathscr">𝒟</mi><mo lspace="0em" rspace="0em" class="tml-prime">′</mo></mrow></math>: Dataset after discarding one row from <math><mi class="mathscr">𝒟</mi></math> <span class="b">(neighboring dataset of <math><mi class="mathscr">𝒟</mi></math>)</span></p>
+    <div data-s="3">
+      <p>The mechanism is said to be <span class="b">Differentially Private</span> if the following holds</p>
+      <math display="block" class="tml-display" style="display:block math;"><mrow><mi>P</mi><mi>r</mi><mo form="prefix" stretchy="false">[</mo><mi class="mathscr">𝒜</mi><mo form="prefix" stretchy="false">(</mo><mi class="mathscr">𝒟</mi><mo separator="true">,</mo><mi>q</mi><mo form="postfix" stretchy="false">)</mo><mo>=</mo><mi>y</mi><mo form="postfix" stretchy="false">]</mo><mo>≤</mo><msup><mi>e</mi><mi>ϵ</mi></msup><mi>P</mi><mi>r</mi><mo form="prefix" stretchy="false">[</mo><mi class="mathscr">𝒜</mi><mo form="prefix" stretchy="false">(</mo><mrow><mi class="mathscr">𝒟</mi><mo lspace="0em" rspace="0em" class="tml-prime">′</mo></mrow><mo separator="true">,</mo><mi>q</mi><mo form="postfix" stretchy="false">)</mo><mo>=</mo><mi>y</mi><mo form="postfix" stretchy="false">]</mo></mrow></math>
+      <p><span class="r">Note:</span> The condition has to be true <b>for all pairs of Neighboring Database</b>, <b>for all queries</b>, and, <b>for all outputs of <math><mi class="mathscr">𝒜</mi></math></b></p>
+    </div>
+  </div>
+  <div class="fnum">9 / 38</div>
+</section>
+
+<section class="frame">
+  <h2 class="ft">Different Perturbation Methods</h2>
+  <div class="fb">
+    <ul>
+      <li>Noise is added to the answer before sending it to the analyst <span class="b">(Output perturbation)</span></li>
+      <li data-s="2">Noise added to the data before computation <span class="b">(Input perturbation)</span> [7]<sup>2</sup>
+        <figure><img src="pics2/LDP.png" alt="Data owners add noise to their data before it reaches the database D; the curator algorithm A answers query q from the user (researcher) with y = Answer" style="--w:322.2"></figure>
+      </li>
+      <li data-s="3"><b>Another variation, in the domain of machine learning:</b> Noise is added to the data at the time of computation <span class="b">(Gradient perturbation)</span> [1]<sup>3</sup></li>
+    </ul>
+  </div>
+  <div class="fn">
+    <p><sup>2</sup>Shiva Prasad Kasiviswanathan et al. "What can we learn privately?" In: SIAM Journal on Computing 2011</p>
+    <p><sup>3</sup>Raef Bassily, Adam Smith, and Abhradeep Thakurta. "Private empirical risk minimization: Efficient algorithms and tight error bounds". In: IEEE annual symposium on foundations of computer science. 2014</p>
+  </div>
+  <div class="fnum">10 / 38</div>
+</section>
+
+<section class="frame">
+  <div class="fb"><p class="huge r">Differential Privacy in Graph</p></div>
+  <div class="fnum">11 / 38</div>
+</section>
+
+<section class="frame">
+  <h2 class="ft">Motivation</h2>
+  <div class="fb">
+    <ul>
+      <li>Graphs are versatile data structures</li>
+      <li data-s="2">Various types of datasets, across different domains e.g. <span class="b">Social Networks</span>, <span class="b">Financial Transactions</span>, <span class="b">Email/Phone call communication</span>, and, <span class="b">Medical science</span> can be represented as graph data</li>
+      <li data-s="3">Entities such as <span class="b">Nation-state actors</span>, <span class="b">Third-party Advertisers</span>, and <span class="b">Any small group of people</span> may want to steal information from such graphs</li>
+      <li data-s="4">Thus it is necessary to analyse the privacy issues in graph data</li>
+    </ul>
+  </div>
+  <div class="fnum">12 / 38</div>
+</section>
+
+<section class="frame">
+  <h2 class="ft">Neighboring Graphs</h2>
+  <div class="fb">
+    <ul>
+      <li>To apply <b>differential privacy</b> in graph data, we have to define <span class="b">neighboring datasets</span> first</li>
+      <li data-s="2">Two types of <span class="b">neighboring graphs</span> are possible:
+        <ul>
+          <li>Two graphs that differ in exactly one edge</li>
+          <li data-s="3">Two graphs that differ in exactly one node and in the edges that connect the particular node to the graph</li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+  <div class="fnum">13 / 38</div>
+</section>
+
+<section class="frame">
+  <h2 class="ft">Differenial Privacy on Graph</h2>
+  <div class="fb">
+    <figure><img src="pictures/GraphSetup.png" alt="Graph G, a trusted curator algorithm A with access to G, and a user (researcher, malicious adversary) who sends queries and receives answers" style="--w:261.45"></figure>
+    <ul>
+      <li data-s="2"><b><span class="b">Edge Differential Privacy</span></b></li>
+      <li data-s="3"><b><span class="b">Node Differential privacy</span></b></li>
+    </ul>
+  </div>
+  <div class="fnum">14 / 38</div>
+</section>
+
+<section class="frame">
+  <h2 class="ft">Object of Differential Private Algorithms</h2>
+  <div class="fb">
+    <p><b>Two Orthogonal Interests:</b></p>
+    <ul>
+      <li>Utility</li>
+      <li>Privacy</li>
+    </ul>
+    <p data-s="2"><span class="r">Impossible to get both in the worst case</span></p>
+    <div data-s="3">
+      <p><b>Objective:</b> To find differentially private algorithms that:</p>
+      <ul>
+        <li>Preserves privacy for all graphs</li>
+        <li>Retains a significant amount of accuracy for an inference about a subclass of graphs</li>
+      </ul>
+    </div>
+  </div>
+  <div class="fnum">15 / 38</div>
+</section>
+
+<section class="frame">
+  <h2 class="ft">Graph Statistics</h2>
+  <div class="fb">
+    <ul>
+      <li><span class="b">Private calculation of node representation</span> [3]<sup>4</sup></li>
+      <li><span class="b">Private calculation of </span> [<span class="g">Triangles</span>, <span class="g">k-Stars</span>] [6]<sup>5</sup></li>
+    </ul>
+  </div>
+  <div class="fn">
+    <p><sup>4</sup>Ameya Daigavane et al. "Node-Level Differentially Private Graph Neural Networks". In: PIARR on Structured Data, Workshop, ICLR 2022</p>
+    <p><sup>5</sup>Jacob Imola, Takao Murakami, and Kamalika Chaudhuri. "Locally differentially private analysis of graph statistics". In: USENIX 2021</p>
+  </div>
+  <div class="fnum">16 / 38</div>
+</section>
+
+<section class="frame">
+  <div class="fb"><p class="huge r">Node Label Differentially Private GNN</p></div>
+  <div class="fnum">17 / 38</div>
+</section>
+
+<section class="frame">
+  <h2 class="ft">Detour: Graph Neural Networks (GNNs)</h2>
+  <div class="fb">
+    <ul>
+      <li><b>What are GNNs?</b>
+        <ul>
+          <li>GNNs are a class of neural networks designed to work with graph data</li>
+          <li>They leverage the graph structure for learning and feature extraction</li>
+        </ul>
+      </li>
+      <li data-s="2"><b>Key Concepts</b>
+        <ul>
+          <li>Message Passing: GNNs use message passing to aggregate information from neighboring nodes</li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+  <div class="fnum">18 / 38</div>
+</section>
+
+<section class="frame" data-steps="4">
+  <h2 class="ft">Detour: Message Passing in GNNs</h2>
+  <div class="fb">
+    <ul>
+      <li><b>Message Passing Concept</b>
+        <ul>
+          <li>GNNs perform iterative message passing between nodes to update their features</li>
+          <li>Nodes exchange information with their neighbors</li>
+        </ul>
+      </li>
+      <li data-s="2"><b>Message Aggregation</b>
+        <ul>
+          <li>For each node, the messages from neighbors are aggregated to update its feature vector</li>
+          <li>This process is repeated for a fixed number of iterations</li>
+        </ul>
+      </li>
+      <li data-s="3"><b>Node Update Function</b>
+        <ul>
+          <li>The node update function combines the node's current feature with the aggregated messages to produce a new feature vector</li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+  <div class="fnum">19 / 38</div>
+</section>
+
+<section class="frame">
+  <h2 class="ft">Detour: Membership Inference Attack</h2>
+  <div class="fb">
+    <ul>
+      <li>In a membership inference attack, the attacker's goal is to know whether a data point is part of training data</li>
+      <li data-s="2">Membership inference attack has been demonstrated against Graph Neural Networks [10]<sup>6</sup></li>
+      <li data-s="3"><span class="b">This motivates towards private training of graph neural networks</span></li>
+    </ul>
+  </div>
+  <div class="fn">
+    <p><sup>6</sup>Iyiola E Olatunji, Wolfgang Nejdl, and Megha Khosla. "Membership inference attack on graph neural networks". In: IEEE TPS-ISA 2021</p>
+  </div>
+  <div class="fnum">20 / 38</div>
+</section>
+
+<section class="frame">
+  <h2 class="ft">Making GNNs Differentially Private</h2>
+  <div class="fb">
+    <p>The work by <b>Ameya Daigavane et al.</b>[3]<sup>7</sup> proposes a version of <b>DP-SGD</b> for private training of GNN. The method they followed was <span class="b">gradient perturbation</span>. Brief discussion:</p>
+    <ul>
+      <li>To train GNN draw multiple <b>sample sub-graphs</b> from the <b>graph</b></li>
+      <li>Calculate the gradient of the error</li>
+      <li>Add Gaussian noise to the gradient</li>
+      <li>Update the new gradient</li>
+    </ul>
+    <p>The authors showed that the algorithm proposed satisfies a relaxed version <b>differentially privacy</b>[9]<sup>8</sup></p>
+  </div>
+  <div class="fn">
+    <p><sup>7</sup>Ameya Daigavane et al. "Node-Level Differentially Private Graph Neural Networks". In: PIARR on Structured Data, Workshop, ICLR 2022</p>
+    <p><sup>8</sup>Ilya Mironov. "Renyi differential privacy". In: CSF 2017</p>
+  </div>
+  <div class="fnum">21 / 38</div>
+</section>
+
+<section class="frame">
+  <div class="fb"><p class="huge r">Private Analysis of Graph Statistics</p></div>
+  <div class="fnum">22 / 38</div>
+</section>
+
+<section class="frame">
+  <h2 class="ft">Outline</h2>
+  <div class="fb">
+    <p>The work "Locally Differentially Private Analysis of Graph Statistics" by Imola et al [6]<sup>9</sup> mainly focuses on <b>private estimation</b> of the following graph structures</p>
+    <ul>
+      <li><span class="b">Triangle:</span> Set of 3 nodes with 3 edges</li>
+      <li><span class="b"><math><mi>k</mi></math>-Star:</span> Consists of a central node connected to other <math><mi>k</mi></math> nodes</li>
+    </ul>
+  </div>
+  <div class="fn">
+    <p><sup>9</sup>Jacob Imola, Takao Murakami, and Kamalika Chaudhuri. "Locally differentially private analysis of graph statistics". In: USENIX 2021</p>
+  </div>
+  <div class="fnum">23 / 38</div>
+</section>
+
+<section class="frame">
+  <h2 class="ft">An Example Graph</h2>
+  <div class="fb">
+    <div class="cols">
+      <div class="col" style="--c:.7">
+        <ul>
+          <li>Consider the network in the picture</li>
+          <li>It has, <math><mn>1</mn></math> triangle and 9, <math><mn>2</mn></math>-stars</li>
+          <li>Each node in the network has the following information
+            <ul>
+              <li>It's own private connections</li>
+              <li>The total number of nodes in the graph</li>
+              <li>Triangle and 2-star counts of the graph</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+      <div class="col" style="--c:.3">
+        <figure><img src="figures/globClust.svg" alt="A graph on nodes a, b, c, d, e, f with edges a–b, b–c, c–a, b–d, b–e and e–f" style="--w:129.917"></figure>
+      </div>
+    </div>
+  </div>
+  <div class="fnum">24 / 38</div>
+</section>
+
+<section class="frame">
+  <h2 class="ft">Honest But Curious Node</h2>
+  <div class="fb">
+    <div class="cols">
+      <div class="col" style="--c:.7">
+        <ul>
+          <li>Consider <math><mi>e</mi></math>, which is an <b>honest but curious node</b></li>
+          <li>It has access to the following information:
+            <ul>
+              <li>It's own private connections</li>
+              <li>The total number of nodes in the graph</li>
+              <li>There are <math><mn>1</mn></math>, triangle and <math><mn>9</mn></math>, <math><mn>2</mn></math>-stars</li>
+            </ul>
+          </li>
+          <li><span class="r">It wants to know about the unknown part of the graph</span></li>
+          <li>In the network, <math><mi>f</mi></math>-<math><mi>e</mi></math>-<math><mi>b</mi></math> is a known part</li>
+          <li>The part with four nodes <math><mi>b</mi></math>, <math><mi>c</mi></math>, <math><mi>d</mi></math> and <math><mi>a</mi></math> is unknown part</li>
+        </ul>
+      </div>
+      <div class="col" style="--c:.3">
+        <figure><img src="figures/privacy.svg" alt="The same graph with node e highlighted" style="--w:129.917"></figure>
+      </div>
+    </div>
+  </div>
+  <div class="fnum">25 / 38</div>
+</section>
+
+<section class="frame">
+  <h2 class="ft">Brute Force Attack</h2>
+  <div class="fb">
+    <ul>
+      <li>We list all possible <math><mn>2</mn></math>-stars between <math><mi>b</mi></math>, <math><mi>c</mi></math>, <math><mi>d</mi></math> and <math><mi>a</mi></math> (by placing <math><mi>b</mi></math>, <math><mi>c</mi></math>, <math><mi>d</mi></math> and <math><mi>a</mi></math> clockwise, starting from top left)</li>
+    </ul>
+    <figure>
+      <img src="figures/brutForce.svg" alt="The twelve possible 2-stars on four nodes placed at the corners of a square" style="--w:249.849">
+      <figcaption><span class="cn">Figure:</span> All possible 2-stars in the unknown part of the network</figcaption>
+    </figure>
+  </div>
+  <div class="fnum">26 / 38</div>
+</section>
+
+<section class="frame">
+  <h2 class="ft">Reconstruction of Network</h2>
+  <div class="fb">
+    <div class="cols">
+      <div class="col" style="--c:.3">
+        <figure>
+          <img src="figures/mixNmatch.svg" alt="Adding different 2-stars to the known part of the network" style="--w:110.951">
+          <figcaption><span class="cn">Figure:</span> Addition of different 2-stars to the network</figcaption>
+        </figure>
+      </div>
+      <div class="col" style="--c:.7">
+        <ul>
+          <li>There is only one triangle. Thus two possibilities either <math><mi>b</mi></math> is part of it or not</li>
+          <li data-s="2">First take <math><mi>b</mi></math> is <b>not part</b> of it</li>
+          <li data-s="3">Adding one of the above two patterns to the network<b> does not add up</b> to 9 <math><mn>2</mn></math> stars. This can be seen for all two stars. So we rule out this possibility</li>
+          <li data-s="4">So <math><mi>b</mi></math> is part of the triangle. Adding <math><mi>b</mi></math> to a particular pattern we get 9, 2-stars. This can be taken as a particular reconstructed network</li>
+          <li data-s="5">This type of privacy attack has motivated authors towards <b>private estimation</b> of the <b>triangle</b> and <b><math><mrow><mn>2</mn><mo>−</mo></mrow></math>star</b> counts</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="fnum">27 / 38</div>
+</section>
+
+<section class="frame">
+  <h2 class="ft">Ingredients</h2>
+  <div class="fb">
+    <ul>
+      <li><span class="b">Local differential privacy</span>
+        <figure><img src="pics2/LDP.png" alt="Data owners add noise to their data before it reaches the database D; the curator algorithm A answers query q from the user (researcher) with y = Answer" style="--w:358"></figure>
+      </li>
+      <li><span class="b">Randomized response</span> Randomly flipping edges with some probability</li>
+    </ul>
+  </div>
+  <div class="fnum">28 / 38</div>
+</section>
+
+<section class="frame">
+  <h2 class="ft">Algorithm: K Star</h2>
+  <div class="fb">
+    <ul>
+      <li>Each node adds the noise to the <math><mi>k</mi></math>-star count. [Ensuring differential privacy]</li>
+      <li>The server calculates the sum of noisy counts as an estimate</li>
+    </ul>
+  </div>
+  <div class="fnum">29 / 38</div>
+</section>
+
+<section class="frame">
+  <h2 class="ft">Algorithm: Triangle 1</h2>
+  <div class="fb">
+    <ul>
+      <li><span class="r">Difficult</span> as no user (A) can see the edge between its two neighbors (B) and (C)</li>
+      <li><span class="b">Naive</span> approach would be
+        <ul>
+          <li>Each user applies <b>RR</b> to each bit of her neighbor list. [This will ensure edge differential privacy]</li>
+          <li>Each user sends noisy edges. The server publishes the noisy graph</li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+  <div class="fnum">30 / 38</div>
+</section>
+
+<section class="frame">
+  <h2 class="ft">Algorithm: Triangle 2</h2>
+  <div class="fb">
+    <p><span class="g">More appropriate two-round protocol</span></p>
+    <ul>
+      <li>Each user will download the noisy graph in round 2</li>
+      <li>Update the triangle counts with their private input</li>
+    </ul>
+  </div>
+  <div class="fnum">31 / 38</div>
+</section>
+
+<section class="frame">
+  <div class="fb"><p class="huge r">Conclusion and Plan for PhD</p></div>
+  <div class="fnum">32 / 38</div>
+</section>
+
+<section class="frame">
+  <h2 class="ft">Conclusion</h2>
+  <div class="fb">
+    <ul>
+      <li>Privacy of sensitive information can be compromised by different attacks</li>
+      <li data-s="2">Differential privacy is one solution to address these issues</li>
+    </ul>
+  </div>
+  <div class="fnum">33 / 38</div>
+</section>
+
+<section class="frame">
+  <h2 class="ft">Plan for PhD</h2>
+  <div class="fb">
+    <ul>
+      <li>Personal advertisements come via social network</li>
+      <li>Often these personal advertisements are the results of pervasive tracking of users, resulting in private information violation</li>
+      <li>As a plan for my Ph.D., I am planning to work in the area of privacy-preserving alternatives to these personal advertisement algorithms</li>
+    </ul>
+  </div>
+  <div class="fnum">34 / 38</div>
+</section>
+
+<section class="frame">
+  <h2 class="ft">Reference I</h2>
+  <div class="fb top">
+    <ol class="bib">
+      <li><span class="bl">[1]</span><span class="ba">Raef Bassily, Adam Smith, and Abhradeep Thakurta.</span> “Private empirical risk minimization: Efficient algorithms and tight error bounds”. <span class="bv">In: <i>2014 IEEE 55th annual symposium on foundations of computer science</i>.</span> IEEE. 2014, pp. 464–473.</li>
+      <li><span class="bl">[2]</span><span class="ba">Raef Bassily, Adam Smith, and Abhradeep Thakurta.</span> “Private empirical risk minimization: Efficient algorithms and tight error bounds”. <span class="bv">In: <i>2014 IEEE 55th annual symposium on foundations of computer science</i>.</span> IEEE. 2014, pp. 464–473.</li>
+      <li><span class="bl">[3]</span><span class="ba">Ameya Daigavane et al.</span> “Node-Level Differentially Private Graph Neural Networks”. <span class="bv">In: <i>ICLR 2022 Workshop on PAIR 2Struct: Privacy, Accountability, Interpretability, Robustness, Reasoning on Structured Data</i>. 2022.</span></li>
+      <li><span class="bl">[4]</span><span class="ba">Cynthia Dwork et al.</span> “Calibrating noise to sensitivity in private data analysis”. <span class="bv">In: <i>Theory of Cryptography: Third Theory of Cryptography Conference, TCC 2006, New York, NY, USA, March 4-7, 2006. Proceedings 3</i>.</span> Springer. 2006, <span class="bv">pp. 265–284.</span></li>
+    </ol>
+  </div>
+  <div class="fnum">35 / 38</div>
+</section>
+
+<section class="frame">
+  <h2 class="ft">Reference II</h2>
+  <div class="fb top">
+    <ol class="bib">
+      <li><span class="bl">[5]</span><span class="ba">Cynthia Dwork et al.</span> “Our data, ourselves: Privacy via distributed noise generation”. <span class="bv">In: <i>Advances in Cryptology-EUROCRYPT 2006: 24th Annual International Conference on the Theory and Applications of Cryptographic Techniques, St. Petersburg, Russia, May 28-June 1, 2006. Proceedings 25</i>. Springer. 2006, pp. 486–503.</span></li>
+      <li><span class="bl">[6]</span><span class="ba">Jacob Imola, Takao Murakami, and Kamalika Chaudhuri.</span> “Locally differentially private analysis of graph statistics”. <span class="bv">In: <i>30th USENIX security symposium (USENIX Security 21)</i>. 2021, pp. 983–1000.</span></li>
+      <li><span class="bl">[7]</span><span class="ba">Shiva Prasad Kasiviswanathan et al.</span> “What can we learn privately?” <span class="bv">In: <i>SIAM Journal on Computing</i> 40.3 (2011), pp. 793–826.</span></li>
+      <li><span class="bl">[8]</span><span class="ba">Thomas N Kipf and Max Welling.</span> “Semi-supervised classification with graph convolutional networks”. <span class="bv">In: <i>ICLR</i> (2017).</span></li>
+      <li><span class="bl">[9]</span><span class="ba">Ilya Mironov.</span> “Rényi differential privacy”. <span class="bv">In: <i>2017 IEEE 30th computer security foundations symposium (CSF)</i>. IEEE. 2017, pp. 263–275.</span></li>
+    </ol>
+  </div>
+  <div class="fnum">36 / 38</div>
+</section>
+
+<section class="frame">
+  <h2 class="ft">Reference III</h2>
+  <div class="fb">
+    <ol class="bib">
+      <li><span class="bl">[10]</span><span class="ba">Iyiola E Olatunji, Wolfgang Nejdl, and Megha Khosla.</span> “Membership inference attack on graph neural networks”. <span class="bv">In: <i>2021 Third IEEE International Conference on Trust, Privacy and Security in Intelligent Systems and Applications (TPS-ISA)</i>. IEEE. 2021, pp. 11–20.</span></li>
+      <li><span class="bl">[11]</span><span class="ba">Ohad Shamir and Tong Zhang.</span> “Stochastic gradient descent for non-smooth optimization: Convergence results and optimal averaging schemes”. <span class="bv">In: <i>International conference on machine learning</i>. PMLR. 2013, pp. 71–79.</span></li>
+    </ol>
+  </div>
+  <div class="fnum">37 / 38</div>
+</section>
+
+<section class="frame">
+  <div class="fb"><p class="huge r">Thank You</p></div>
+  <div class="fnum">38 / 38</div>
+</section>
+
+<section class="frame plain">
+  <h2 class="ft">Differential Privacy (Formal Definition)</h2>
+  <div class="fb">
+    <p>Here we will define the formal definition of <span class="b">Differential Privacy</span>. Let:</p>
+    <ul>
+      <li><math><mi class="mathscr">𝒟</mi></math>: Dataset containing personal information</li>
+      <li><math><mrow><mi class="mathscr">𝒟</mi><mo lspace="0em" rspace="0em" class="tml-prime">′</mo></mrow></math>: Dataset after discarding one row from <math><mi class="mathscr">𝒟</mi></math> (<span class="b">Neighboring dataset to <math><mi class="mathscr">𝒟</mi></math> denoted by <math><mrow><mi class="mathscr">𝒟</mi><mo>∼</mo></mrow><mrow><mrow><mi class="mathscr">𝒟</mi><mo lspace="0em" rspace="0em" class="tml-prime">′</mo></mrow></mrow></math></span>)</li>
+      <li><math><mi class="mathscr">𝒜</mi></math>: An algorithm that receives the query from the user, evaluates the query, and, sends the obfuscated answer to the user</li>
+      <li><math><mi class="mathscr">𝒬</mi></math>: Set of all possible queries</li>
+      <li><math><mi class="mathscr">𝒴</mi></math>: Set of all possible outputs of <math><mi class="mathscr">𝒜</mi></math></li>
+      <li><math><mi>ϵ</mi></math>: Privacy budget</li>
+    </ul>
+    <p>Now the <span class="r">algorithm <math><mi class="mathscr">𝒜</mi></math></span> will be called a <span class="b">Differentially Private</span> algorithm, with privacy budget <math><mi>ϵ</mi></math> if,</p>
+    <math display="block" class="tml-display" style="display:block math;"><mrow><mo form="prefix" stretchy="false">|</mo><mrow><mi>log</mi><mo>⁡</mo></mrow><mrow><mo fence="true" form="prefix">[</mo><mfrac><mrow><mi>P</mi><mi>r</mi><mo form="prefix" stretchy="false">[</mo><mi class="mathscr">𝒜</mi><mo form="prefix" stretchy="false">(</mo><mi class="mathscr">𝒟</mi><mo separator="true">,</mo><mi>q</mi><mo form="postfix" stretchy="false">)</mo><mo>=</mo><mi>y</mi><mo form="postfix" stretchy="false" lspace="0em" rspace="0em">]</mo></mrow><mrow><mi>P</mi><mi>r</mi><mo form="prefix" stretchy="false">[</mo><mi class="mathscr">𝒜</mi><mo form="prefix" stretchy="false">(</mo><mrow><mi class="mathscr">𝒟</mi><mo lspace="0em" rspace="0em" class="tml-prime">′</mo></mrow><mo separator="true">,</mo><mi>q</mi><mo form="postfix" stretchy="false">)</mo><mo>=</mo><mi>y</mi><mo form="postfix" stretchy="false" lspace="0em" rspace="0em">]</mo></mrow></mfrac><mo fence="true" form="postfix">]</mo></mrow><mo form="postfix" stretchy="false">|</mo><mo>≤</mo><mi>ϵ</mi><mo separator="true">,</mo><mspace width="0.2222em"></mspace><mi>∀</mi><mi>y</mi><mo>∈</mo><mi class="mathscr">𝒴</mi><mo separator="true">,</mo><mspace width="0.2222em"></mspace><mi>∀</mi><mi>q</mi><mo>∈</mo><mi class="mathscr">𝒬</mi><mo separator="true">,</mo><mspace width="0.2222em"></mspace><mi>∀</mi><mi class="mathscr">𝒟</mi><mo>∼</mo><mrow><mi class="mathscr">𝒟</mi><mo lspace="0em" rspace="0em" class="tml-prime">′</mo></mrow></mrow></math>
+  </div>
+</section>
+
+<section class="frame plain">
+  <h2 class="ft">Relaxation Of Differential Privacy</h2>
+  <div class="fb">
+    <p>Two relaxations of differential privacy have been proposed.</p>
+    <ul>
+      <li><span class="b">Approximate Differential Privacy</span>
+        <ul>
+          <li>One additional parameter is introduced over <span class="b">Differential Privacy</span> to capture the failure probability of the private mechanism; and tried to optimize it [5]<sup>10</sup></li>
+          <li><span class="g">Criterion</span>: <math><mrow><mi>P</mi><mi>r</mi><mo form="prefix" stretchy="false">[</mo><mi class="mathscr">𝒜</mi><mo form="prefix" stretchy="false">(</mo><mi class="mathscr">𝒟</mi><mo separator="true">,</mo><mi>q</mi><mo form="postfix" stretchy="false">)</mo><mo>=</mo><mi>y</mi><mo form="postfix" stretchy="false">]</mo><mo>≤</mo></mrow><mrow><msup><mi>e</mi><mi>ϵ</mi></msup><mi>P</mi><mi>r</mi><mo form="prefix" stretchy="false">[</mo><mi class="mathscr">𝒜</mi><mo form="prefix" stretchy="false">(</mo><mrow><mi class="mathscr">𝒟</mi><mo lspace="0em" rspace="0em" class="tml-prime">′</mo></mrow><mo separator="true">,</mo><mi>q</mi><mo form="postfix" stretchy="false">)</mo><mo>=</mo><mi>y</mi><mo form="postfix" stretchy="false">]</mo><mo>+</mo></mrow><mrow><mi>δ</mi></mrow></math></li>
+        </ul>
+      </li>
+      <li><span class="b">Renyi Differential Privacy</span>
+        <ul>
+          <li>This relaxation tries to address the above issue but with different parameterization <span class="b">Differential Privacy</span> [9]<sup>11</sup></li>
+          <li><span class="g">Criterion</span>: <math><mrow><mi>P</mi><mi>r</mi><mo form="prefix" stretchy="false">[</mo><mi class="mathscr">𝒜</mi><mo form="prefix" stretchy="false">(</mo><mi class="mathscr">𝒟</mi><mo separator="true">,</mo><mi>q</mi><mo form="postfix" stretchy="false">)</mo><mo>=</mo><mi>y</mi><mo form="postfix" stretchy="false">]</mo><mo>≤</mo></mrow><mrow><mo form="prefix" stretchy="false">(</mo><msup><mi>e</mi><mi>ϵ</mi></msup><mi>P</mi><mi>r</mi><mo form="prefix" stretchy="false">[</mo><mi class="mathscr">𝒜</mi><mo form="prefix" stretchy="false">(</mo><mrow><mi class="mathscr">𝒟</mi><mo lspace="0em" rspace="0em" class="tml-prime">′</mo></mrow><mo separator="true">,</mo><mi>q</mi><mo form="postfix" stretchy="false">)</mo><mo>=</mo><mi>y</mi><mo form="postfix" stretchy="false">]</mo><msup><mo form="postfix" stretchy="false">)</mo><mrow><mn>1</mn><mo>−</mo><mfrac><mn>1</mn><mi>α</mi></mfrac></mrow></msup></mrow></math></li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+  <div class="fn">
+    <p><sup>10</sup>Cynthia Dwork et al. "Our data, ourselves: Privacy via distributed noise generation". In: EUROCRYPT 2006</p>
+    <p><sup>11</sup>Ilya Mironov. "Renyi differential privacy". In: CSF 2017</p>
+  </div>
+</section>
+
+<section class="frame plain tight">
+  <h2 class="ft">GCN</h2>
+  <div class="fb">
+    <p>Graph Convolution Network is due to Kipf et al. [8] <sup>12</sup></p>
+    <ul>
+      <li><b>Input</b>
+        <ul>
+          <li>Graph <math><mrow><mi>G</mi><mo>=</mo></mrow><mrow><mo form="prefix" stretchy="false">(</mo><mi>V</mi><mo separator="true">,</mo><mi>E</mi><mo form="postfix" stretchy="false">)</mo></mrow></math>, with <math><mrow><mrow><mo fence="true" form="prefix">|</mo><mi>V</mi><mo fence="true" form="postfix">|</mo></mrow><mo>=</mo></mrow><mrow><mi>N</mi></mrow></math></li>
+          <li><math><msub><mi>A</mi><mrow><mi>N</mi><mo>×</mo><mi>N</mi></mrow></msub></math> is the Adjacency matrix</li>
+          <li>Feature matrix <math><msub><mi>X</mi><mrow><mi>N</mi><mo>×</mo><mi>D</mi></mrow></msub></math>, <math><mi>D</mi></math> is the initial feature dimension</li>
+        </ul>
+      </li>
+      <li><b>Output</b>
+        <ul>
+          <li><math><msubsup><mi>H</mi><mrow><mi>N</mi><mo>×</mo><mi>d</mi></mrow><mrow><mo form="prefix" stretchy="false" lspace="0em" rspace="0em">(</mo><mi>L</mi><mo form="postfix" stretchy="false" lspace="0em" rspace="0em">)</mo></mrow></msubsup></math> final node embedding. <math><mrow><mo form="prefix" stretchy="false">(</mo><mi>d</mi><mo>&lt;</mo><mi>D</mi><mo form="postfix" stretchy="false">)</mo></mrow></math></li>
+        </ul>
+      </li>
+      <li><math><mrow><mover><mi>A</mi><mo stretchy="false" style="math-style:normal;math-depth:0;">~</mo></mover><mo>=</mo></mrow><mrow><mi>A</mi><mo>+</mo></mrow><mrow><msub><mi>I</mi><mi>n</mi></msub></mrow></math>, after adding self loops</li>
+      <li><math><mrow><msub><mover><mi>D</mi><mo stretchy="false" style="math-style:normal;math-depth:0;">~</mo></mover><mrow><mi>N</mi><mo>×</mo><mi>N</mi></mrow></msub><mo>=</mo></mrow><mrow><mi>d</mi><mi>i</mi><mi>a</mi><mi>g</mi><mo form="prefix" stretchy="false">{</mo><msub><mi>d</mi><mn>1</mn></msub><mo separator="true">,</mo><mo>⋯</mo><mspace width="0.1667em"></mspace><mo separator="true">,</mo><msub><mi>d</mi><mi>N</mi></msub><mo form="postfix" stretchy="false">}</mo></mrow></math>, <math><msub><mi>d</mi><mi>i</mi></msub></math> is the degree of <math><msup><mi>i</mi><mrow><mi>t</mi><mi>h</mi></mrow></msup></math> node</li>
+      <li><math><mrow><msup><mover><mi>D</mi><mo stretchy="false" style="math-style:normal;math-depth:0;">~</mo></mover><mrow><mo lspace="0em" rspace="0em">−</mo><mfrac><mn>1</mn><mn>2</mn></mfrac></mrow></msup><mover><mi>A</mi><mo stretchy="false" style="math-style:normal;math-depth:0;">~</mo></mover><msup><mover><mi>D</mi><mo stretchy="false" style="math-style:normal;math-depth:0;">~</mo></mover><mfrac><mn>1</mn><mn>2</mn></mfrac></msup><mo>=</mo></mrow><mrow><msub><mrow><mo fence="true" form="prefix">(</mo><mrow><mo fence="true" form="prefix">(</mo><mfrac><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><msqrt><mrow><msub><mi>d</mi><mi>i</mi></msub><msub><mi>d</mi><mi>j</mi></msub></mrow></msqrt></mfrac><mo fence="true" form="postfix">)</mo></mrow><mo fence="true" form="postfix">)</mo></mrow><mrow><mi>N</mi><mo>×</mo><mi>N</mi></mrow></msub></mrow></math>, normalized version of Adjacency matrix</li>
+      <li><math><mrow><msubsup><mi>H</mi><mrow><mi>N</mi><mo>×</mo><mi>D</mi></mrow><mrow><mo form="prefix" stretchy="false" lspace="0em" rspace="0em">(</mo><mn>0</mn><mo form="postfix" stretchy="false" lspace="0em" rspace="0em">)</mo></mrow></msubsup><mo>=</mo></mrow><mrow><mi>X</mi></mrow></math></li>
+      <li><math><msup><mi>W</mi><mrow><mo form="prefix" stretchy="false" lspace="0em" rspace="0em">(</mo><mi>l</mi><mo form="postfix" stretchy="false" lspace="0em" rspace="0em">)</mo></mrow></msup></math>, is weight matrix or projection matrix</li>
+      <li><math><mrow><msup><mi>H</mi><mrow><mo form="prefix" stretchy="false" lspace="0em" rspace="0em">(</mo><mi>l</mi><mo>+</mo><mn>1</mn><mo form="postfix" stretchy="false" lspace="0em" rspace="0em">)</mo></mrow></msup><mo>=</mo></mrow><mrow><mi>σ</mi><mrow><mo fence="true" form="prefix">(</mo><msup><mover><mi>D</mi><mo stretchy="false" style="math-style:normal;math-depth:0;">~</mo></mover><mrow><mo lspace="0em" rspace="0em">−</mo><mfrac><mn>1</mn><mn>2</mn></mfrac></mrow></msup><mover><mi>A</mi><mo stretchy="false" style="math-style:normal;math-depth:0;">~</mo></mover><msup><mover><mi>D</mi><mo stretchy="false" style="math-style:normal;math-depth:0;">~</mo></mover><mfrac><mn>1</mn><mn>2</mn></mfrac></msup><msup><mi>H</mi><mrow><mo form="prefix" stretchy="false" lspace="0em" rspace="0em">(</mo><mi>l</mi><mo form="postfix" stretchy="false" lspace="0em" rspace="0em">)</mo></mrow></msup><msup><mi>W</mi><mrow><mo form="prefix" stretchy="false" lspace="0em" rspace="0em">(</mo><mi>l</mi><mo form="postfix" stretchy="false" lspace="0em" rspace="0em">)</mo></mrow></msup><mo fence="true" form="postfix">)</mo></mrow></mrow></math></li>
+    </ul>
+  </div>
+  <div class="fn">
+    <p><sup>12</sup>Thomas N Kipf and Max Welling. "Semi-supervised classification with graph convolutional networks" In: ICLR 2017</p>
+  </div>
+</section>
+
+<section class="frame plain">
+  <h2 class="ft">SGD detour</h2>
+  <div class="fb">
+    <p>Minimise <math><mi class="mathscr">ℒ</mi></math>, in some parameter space <math><mi class="mathscr">𝒞</mi></math>, where</p>
+    <ul>
+      <li><math><mrow><mi class="mathscr">ℒ</mi><mo lspace="0.2222em" rspace="0.2222em">:</mo></mrow><mrow><mi class="mathscr">𝒞</mi><mo stretchy="false">→</mo></mrow><mrow><mi>ℝ</mi></mrow></math> is a convex function.</li>
+      <li><math><mi class="mathscr">ℒ</mi></math> is L Lipschitz. <math><mrow><mo form="prefix" stretchy="false">‖</mo></mrow><mrow><mo form="prefix" stretchy="false">∇</mo><mi class="mathscr">ℒ</mi><msub><mo form="postfix" stretchy="false">‖</mo><mn>2</mn></msub><mo>≤</mo></mrow><mrow><mi>L</mi></mrow></math></li>
+    </ul>
+    <div class="algo">
+      <p class="algo-cap"><b>Algorithm 1</b> SGD</p>
+      <ol class="lines">
+        <li>Set <math><msub><mi>θ</mi><mn>0</mn></msub></math> in <math><mi class="mathscr">𝒞</mi></math></li>
+        <li><b>for</b> <math><mrow><mi>t</mi><mo>←</mo></mrow><mrow><mn>1</mn><mo form="prefix" stretchy="false">(</mo><mn>1</mn><mo form="postfix" stretchy="false">)</mo><mi>T</mi></mrow></math> <b>do</b></li>
+        <li class="in">Select <math><mrow><mi>i</mi><mo>∈</mo></mrow><mrow><mo form="prefix" stretchy="false">[</mo><mi>n</mi><mo form="postfix" stretchy="false">]</mo></mrow></math> uniformly at random</li>
+        <li class="in"><math><mrow><msub><mi>θ</mi><mi>t</mi></msub><mo>←</mo></mrow><mrow><msub><mi>θ</mi><mrow><mi>t</mi><mo>−</mo><mn>1</mn></mrow></msub><mo>−</mo></mrow><mrow><mi>η</mi><mo>∇</mo><mi class="mathscr">ℒ</mi><mo form="prefix" stretchy="false">(</mo><msub><mi>θ</mi><mrow><mi>t</mi><mo>−</mo><mn>1</mn></mrow></msub><mo separator="true">,</mo><mi>D</mi><mo form="postfix" stretchy="false">)</mo></mrow></math></li>
+        <li><b>end for</b></li>
+        <li><b>return</b> <math><mrow><mover><mi>θ</mi><mo stretchy="false" class="tml-capshift" style="math-style:normal;math-depth:0;">^</mo></mover><mo>=</mo></mrow><mrow><msub><mi>θ</mi><mi>T</mi></msub></mrow></math></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<section class="frame plain">
+  <h2 class="ft">Noisy SGD</h2>
+  <div class="fb">
+    <p>Shamir et. al. [2013] [11] investigated the noisy version of SGD.</p>
+    <div class="thm" data-s="2">
+      <p class="thm-title">Theorem (Noisy SGD)</p>
+      <p>Let <math><mi class="mathscr">ℒ</mi></math> be a convex function and <math><mrow><msup><mi>θ</mi><mo>*</mo></msup><mo>=</mo></mrow><mrow><mrow><mi>arg</mi><mo>⁡</mo><mspace width="0.1667em"></mspace></mrow><msub><mi>min</mi><mrow><mi>θ</mi><mo>∈</mo><mi class="mathscr">𝒞</mi></mrow></msub><mo>⁡</mo><mspace width="0.1667em"></mspace></mrow><mrow><mrow><mi class="mathscr">ℒ</mi><mo form="prefix" stretchy="false">(</mo><mi class="mathscr">θ</mi><mo form="postfix" stretchy="false" lspace="0em" rspace="0em">)</mo></mrow></mrow></math>. Let <math><msub><mi>θ</mi><mn>0</mn></msub></math> be an arbitary point in <math><mi class="mathscr">𝒞</mi></math> and <math><mrow><msub><mi>θ</mi><mi>t</mi></msub><mo>=</mo></mrow><mrow><msub><mi>θ</mi><mrow><mi>t</mi><mo>−</mo><mn>1</mn></mrow></msub><mo>−</mo></mrow><mrow><mi>η</mi><mi class="mathscr">𝒢</mi><mo form="prefix" stretchy="false">(</mo><msub><mi>θ</mi><mrow><mi>t</mi><mo>−</mo><mn>1</mn></mrow></msub><mo form="postfix" stretchy="false">)</mo></mrow></math>, where <math><mrow><mi>𝔼</mi><mo form="prefix" stretchy="false">[</mo><mi class="mathscr">𝒢</mi><mo form="prefix" stretchy="false">(</mo><msub><mi>θ</mi><mrow><mi>t</mi><mo>−</mo><mn>1</mn></mrow></msub><mo form="postfix" stretchy="false">)</mo><mo form="postfix" stretchy="false">]</mo><mo>=</mo></mrow><mrow><mo form="prefix" stretchy="false">∇</mo><mi class="mathscr">ℒ</mi><mo form="prefix" stretchy="false">(</mo><msub><mi>θ</mi><mrow><mi>t</mi><mo>−</mo><mn>1</mn></mrow></msub><mo form="postfix" stretchy="false">)</mo></mrow></math> and <math><mrow><mi>𝔼</mi><mo form="prefix" stretchy="false">[</mo><mo form="prefix" stretchy="false">‖</mo><mi class="mathscr">𝒢</mi><mo form="prefix" stretchy="false">(</mo><msub><mi>θ</mi><mrow><mi>t</mi><mo>−</mo><mn>1</mn></mrow></msub><mo form="postfix" stretchy="false">)</mo><msubsup><mo form="postfix" stretchy="false">‖</mo><mn>2</mn><mn>2</mn></msubsup><mo form="postfix" stretchy="false">]</mo><mo>≤</mo></mrow><mrow><msup><mi>G</mi><mn>2</mn></msup></mrow></math>, and the learning rate function <math><mrow><mi>η</mi><mo form="prefix" stretchy="false">(</mo><mi>t</mi><mo form="postfix" stretchy="false">)</mo><mo>=</mo></mrow><mrow><mfrac><mrow><mo form="prefix" stretchy="false" lspace="0em" rspace="0em">‖</mo><mi class="mathscr">𝒞</mi><msub><mo form="postfix" stretchy="false">‖</mo><mn>2</mn></msub></mrow><mrow><mi>G</mi><msqrt><mi>t</mi></msqrt></mrow></mfrac></mrow></math>. Then for any <math><mrow><mi>T</mi><mo>≥</mo></mrow><mrow><mn>0</mn></mrow></math>, we have the following:</p>
+      <math display="block" class="tml-display" style="display:block math;"><mrow><mi>𝔼</mi><mo form="prefix" stretchy="false">[</mo><mi class="mathscr">ℒ</mi><mo form="prefix" stretchy="false">(</mo><msub><mi>θ</mi><mi>T</mi></msub><mo form="postfix" stretchy="false">)</mo><mo>−</mo><mi class="mathscr">ℒ</mi><mo form="prefix" stretchy="false">(</mo><msup><mi>θ</mi><mo form="prefix" stretchy="false">*</mo></msup><mo form="postfix" stretchy="false">)</mo><mo form="postfix" stretchy="false">]</mo><mo>=</mo><mi class="mathcal">𝒪</mi><mrow><mo fence="true" form="prefix">(</mo><mfrac><mrow><mo form="prefix" stretchy="false" lspace="0em" rspace="0em">‖</mo><mi class="mathscr">𝒞</mi><mo form="postfix" stretchy="false">‖</mo><mi>G</mi><mrow><mspace width="0.1667em"></mspace><mi>log</mi><mo>⁡</mo><mspace width="0.1667em"></mspace></mrow><mi>T</mi></mrow><msqrt><mi>T</mi></msqrt></mfrac><mo fence="true" form="postfix">)</mo></mrow></mrow></math>
+    </div>
+    <p data-s="3">As differential privacy secures privacy by adding noise, this result is useful in the domain of differential privacy.</p>
+  </div>
+</section>
+
+<section class="frame plain">
+  <h2 class="ft">DPSGD Part 1</h2>
+  <div class="fb">
+    <p>Bassily, Smith, and Thakurta [2014] [2] used the previous result to come up with a <b>DP</b> version of <b>SGD</b>.</p>
+    <div class="algo" data-s="2">
+      <p class="algo-cap"><b>Algorithm 2</b> DP SGD</p>
+      <ol class="lines">
+        <li><math><mrow><msup><mi>σ</mi><mn>2</mn></msup><mo>←</mo></mrow><mrow><mi>K</mi></mrow></math> <span class="cm"><math><mo lspace="0em" rspace="0em">▹</mo></math> K is chosen appropriately</span></li>
+        <li>Set <math><msub><mi>θ</mi><mn>0</mn></msub></math> in <math><mi class="mathscr">𝒞</mi></math> at random</li>
+        <li><b>for</b> <math><mrow><mi>t</mi><mo>←</mo></mrow><mrow><mn>1</mn><mo form="prefix" stretchy="false">(</mo><mn>1</mn><mo form="postfix" stretchy="false">)</mo><msup><mi>n</mi><mn>2</mn></msup></mrow></math> <b>do</b></li>
+        <li class="in">Select <math><mrow><mi>i</mi><mo>∈</mo></mrow><mrow><mo form="prefix" stretchy="false">[</mo><mi>n</mi><mo form="postfix" stretchy="false">]</mo></mrow></math> uniformly at random</li>
+        <li class="in"><math><mrow><msub><mi>θ</mi><mi>t</mi></msub><mo>←</mo></mrow><mrow><msub><mi>θ</mi><mrow><mi>t</mi><mo>−</mo><mn>1</mn></mrow></msub><mo>−</mo></mrow><mrow><mi>η</mi><mo form="prefix" stretchy="false">(</mo><mi>n</mi><mo>∇</mo><mi class="mathscr">ℒ</mi><mo form="prefix" stretchy="false">(</mo><msub><mi>θ</mi><mrow><mi>t</mi><mo>−</mo><mn>1</mn></mrow></msub><mo separator="true">,</mo><mi>D</mi><mo form="postfix" stretchy="false">)</mo><mo>+</mo><msub><mi>b</mi><mrow><mi>t</mi><mo>−</mo><mn>1</mn></mrow></msub><mo form="postfix" stretchy="false">)</mo></mrow></math> <span class="cm"><math><mo lspace="0em" rspace="0em">▹</mo></math> <math><mrow><msub><mi>b</mi><mrow><mi>t</mi><mo>−</mo><mn>1</mn></mrow></msub><mo>∼</mo></mrow><mrow><mi class="mathscr">𝒩</mi><mo form="prefix" stretchy="false">(</mo><mn>0</mn><mo separator="true">,</mo><msup><mi>σ</mi><mn>2</mn></msup><mi>I</mi><mo form="postfix" stretchy="false">)</mo></mrow></math></span></li>
+        <li><b>end for</b></li>
+        <li><b>return</b> <math><mrow><mover><mi>θ</mi><mo stretchy="false" class="tml-capshift" style="math-style:normal;math-depth:0;">^</mo></mover><mo>=</mo></mrow><mrow><msub><mi>θ</mi><msup><mi>n</mi><mn>2</mn></msup></msub></mrow></math></li>
+      </ol>
+    </div>
+    <p data-s="3">The authors proved this algorithm is differentially private.</p>
+  </div>
+</section>
