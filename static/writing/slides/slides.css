@@ -67,7 +67,7 @@ sup { font-size: 70%; line-height: 0; }
 .huge { text-align: center; font-size: calc(24.88 * var(--pt)); }
 
 /* \tableofcontents */
-.toc { list-style: none; margin: 0; padding: 0; color: var(--structure); display: grid; gap: calc(16 * var(--pt)); }
+.toc { list-style: none; margin: 0; padding: 0; color: var(--structure); display: grid; gap: calc(var(--gap, 16) * var(--pt)); }
 
 /* itemize: Singapore uses dots */
 .fb ul, .fb ol { margin: 0; padding: 0; list-style: none; }
@@ -86,6 +86,7 @@ sup { font-size: 70%; line-height: 0; }
 /* figures */
 figure { margin: calc(6 * var(--pt)) 0; text-align: center; }
 figure img { width: calc(var(--w) * var(--pt)); height: auto; vertical-align: top; }
+.fb li figure { margin: calc(3 * var(--pt)) 0; }
 figcaption { font-size: calc(10 * var(--pt)); margin-top: calc(4 * var(--pt)); }
 .cn { color: var(--structure); }
 
@@ -106,7 +107,7 @@ math[display="block"] { margin: calc(8 * var(--pt)) 0; }
 .tight .fn { margin-bottom: calc(4 * var(--pt)); }
 
 /* footnotes */
-.fn { margin: 0 calc(28.45 * var(--pt)) calc(12 * var(--pt)); font-size: calc(9 * var(--pt)); line-height: 1.25; }
+.fn { margin: 0 calc(28.45 * var(--pt)) calc(9 * var(--pt)); font-size: calc(9 * var(--pt)); line-height: 1.25; }
 .fn::before { content: ""; display: block; width: 40%; border-top: calc(.4 * var(--pt)) solid #000; margin-bottom: calc(2 * var(--pt)); }
 .fn p { margin: 0; }
 .fn sup { display: inline-block; min-width: calc(10.5 * var(--pt)); text-align: right; font-size: 70%; line-height: 1; vertical-align: super; }

@@ -1,0 +1,516 @@
+<section class="frame title-page">
+  <div class="fb">
+    <p class="title">Privacy Aspects of Language Models</p>
+    <p class="author">Sarbajit Ghosh</p>
+  </div>
+  <div class="fnum">1 / 27</div>
+</section>
+
+<section class="frame">
+  <h2 class="ft">Scheme of the Presentation</h2>
+  <div class="fb">
+    <ol class="toc" style="--gap:19">
+      <li>Language Models and Its Issues</li>
+      <li>Mitigation of Language Model Issues</li>
+      <li>Linkage Attack in Language Models</li>
+    </ol>
+  </div>
+  <div class="fnum">2 / 27</div>
+</section>
+
+<section class="frame">
+  <div class="fb"><p class="huge r">Language Models and Memorization</p></div>
+  <div class="fnum">3 / 27</div>
+</section>
+
+<section class="frame">
+  <h2 class="ft">Language Models</h2>
+  <div class="fb">
+    <ul>
+      <li><b>What are Language models?</b> Language models are statistical models that learn the probability of a sequence of words in a given language</li>
+      <li data-s="2">Different types of language models: <b>recurrent neural network (RNN) models</b>, and <b>transformer models</b> etc ...</li>
+      <li data-s="3"><span class="b">Pretrained Language Models:</span> Models that are trained on large corpora of text data using unsupervised learning techniques
+        <ul>
+          <li>GPT (Generative Pretrained Transformer)</li>
+          <li>BERT (Bidirectional Encoder Representations from Transformers)</li>
+        </ul>
+      </li>
+      <li data-s="4"><span class="b">Fine-tuning:</span> Process of retraining the weights to adapt them for a particular application (specific downstream tasks), improving their performance.</li>
+    </ul>
+  </div>
+  <div class="fnum">4 / 27</div>
+</section>
+
+<section class="frame">
+  <h2 class="ft">Memorization in Language Models</h2>
+  <div class="fb">
+    <p>The notion of <b><span class="b">Memorization</span></b> is developed by Carlini et. al.<sup>1</sup></p>
+    <ul>
+      <li><b><span class="b">Extractability:</span></b> A string is said to be extractable from a language model if that string is the <b>most-likely-output</b> by the model when queried using a prompt</li>
+      <li><b><span class="b"><math><mi>k</mi></math>-Eidiatic Memorization:</span></b> A string is said to be <math><mi>k</mi></math>-Eidiatic Memorized if it is extractable from the language model and has appeared as most <math><mi>k</mi></math> times in the data</li>
+      <li>With a <b>larger number of parameters</b>, <b>memorization</b> becomes more <b>persistent</b></li>
+      <li><b>Memorization</b> opens a door to <b>manipulating these models</b> to make inferences on training data</li>
+      <li>If the <b>training data is private</b>, then <b>memorization</b> can be <b>exploited</b> to launch <b>privacy attacks</b></li>
+    </ul>
+  </div>
+  <div class="fn">
+    <p><sup>1</sup><span class="ba">Nicholas Carlini et al.</span> “The Secret Sharer: Evaluating and Testing Unintended Memorization in Neural Networks.”. <span class="bv">In: <i>USENIX Security Symposium</i>. Vol. 267. 2019</span>.</p>
+  </div>
+  <div class="fnum">5 / 27</div>
+</section>
+
+<section class="frame">
+  <h2 class="ft">Influence of a Point</h2>
+  <div class="fb">
+    <p>Influence of a single training data<sup>2</sup></p>
+    <div class="cols">
+      <div class="col" style="--c:.7">
+        <ul>
+          <li>From the CIFAR-10 dataset, 1024 samples were drawn with 50% of training data</li>
+          <li data-s="2">1024 different models were trained</li>
+          <li data-s="3">Models were categorized into two groups based on the presence of one image</li>
+          <li data-s="4">The distribution of loss has been computed for the two groups</li>
+        </ul>
+      </div>
+      <div class="col" style="--c:.3" data-s="4">
+        <figure>
+          <img src="pics2/pointEffect.png" alt="Loss distributions of member and non-member models for four CIFAR-10 images: easy to fit inlier (bird), easy to fit outlier (dog), hard to fit inlier (airplane) and hard to fit outlier (truck)" style="--w:113.2">
+          <figcaption><span class="cn">Figure:</span> Illustration of loss distribution using CIFAR-10 datasets</figcaption>
+        </figure>
+      </div>
+    </div>
+  </div>
+  <div class="fn">
+    <p><sup>2</sup><span class="ba">Nicholas Carlini et al.</span> “Membership inference attacks from first principles”. <span class="bv">In: <i>IEEE Symposium on Security and Privacy</i>. IEEE. 2022, pp. 1897–1914</span>.</p>
+  </div>
+  <div class="fnum">6 / 27</div>
+</section>
+
+<section class="frame">
+  <h2 class="ft">Membership Inference Attack</h2>
+  <div class="fb">
+    <ul>
+      <li>In <span class="r">Membership-Inference-Attack</span><sup>3</sup> the <span class="r">attacker</span> has:
+        <ul>
+          <li>A classification model (<span class="b">target model</span>) with <b>black-box access</b> (returns the classification accuracy)</li>
+          <li>Sample access to the distribution of the data used for training the <span class="b">target model</span></li>
+          <li>A single data point</li>
+        </ul>
+      </li>
+      <li data-s="2">The attacker's goal is to infer his data point is part of the training data of <span class="b">target model</span></li>
+      <li data-s="3">Motivation
+        <ul>
+          <li>Curiosity!</li>
+          <li>The first step toward training data extraction attack</li>
+          <li>To cross-check whether a company has used his data</li>
+          <li>Auditing method, to some private algorithm</li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+  <div class="fn">
+    <p><sup>3</sup><span class="ba">Reza Shokri et al.</span> “Membership inference attacks against machine learning models”. <span class="bv">In: <i>2017 IEEE symposium on security and privacy (SP)</i>. IEEE. 2017, pp. 3–18</span>.</p>
+  </div>
+  <div class="fnum">7 / 27</div>
+</section>
+
+<section class="frame">
+  <h2 class="ft">Strategy of the Attacker</h2>
+  <div class="fb">
+    <ul>
+      <li>Attacker knows about the phenomenon <b><span class="r">memorization</span></b> and wants to use that</li>
+      <li>The attacker draws a sample dataset from the data distribution</li>
+      <li>Trains an <span class="r">Attack Model</span> to distinguish the behaviour of the <span class="r">Target Model</span></li>
+      <li>Additionally, the Attacker
+        <ul>
+          <li>Tries to guess the architecture of the model <span class="r">Attack Model</span></li>
+          <li>Trains a model with the guessed architecture called <span class="b">Shadow model</span>, to understand the behaviour of the <span class="r">Target Model</span> with respect to the training data</li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+  <div class="fnum">8 / 27</div>
+</section>
+
+<section class="frame">
+  <div class="fb"><p class="huge r">Mitigation of Language Model Issues</p></div>
+  <div class="fnum">9 / 27</div>
+</section>
+
+<section class="frame">
+  <h2 class="ft">Modern Concept of Privacy</h2>
+  <div class="fb">
+    <p><span class="b">Prof. Helen Nissenbaum's</span> <span class="g">Contextual Integrity</span><sup>4</sup> provides a framework for disambiguating <b>which context information</b> can be <b>shared under</b> and <b>with whom</b>. It consists of a five-tuple</p>
+    <ul>
+      <li><b><i><span class="b">(Data Subject, Sender, Recipient, Information type, Transmission principle)</span></i></b></li>
+      <li data-s="2"><b><span class="r">Modification of any of these tuples could change privacy implications</span></b></li>
+    </ul>
+  </div>
+  <div class="fn">
+    <p><sup>4</sup><span class="ba">Helen Nissenbaum.</span> “Privacy as contextual integrity”. <span class="bv">In: <i>Wash. L. Rev.</i> 79 (2004), p. 119</span>.</p>
+  </div>
+  <div class="fnum">10 / 27</div>
+</section>
+
+<section class="frame">
+  <h2 class="ft">Privacy Violation is different from Security Breach</h2>
+  <div class="fb">
+    <p>As pointed out by <span class="b"><b>Prof. Latanya Sweeney</b></span><sup>5</sup></p>
+    <ul>
+      <li>The area of <b>authentication and access control</b> might look similar to the <b>privacy domain</b>, but they are <b><span class="r">different</span></b>!!</li>
+      <li>Works in the <b>privacy domain</b> assume that the recipient of the information has the authority to receive that information</li>
+      <li>Access control and authentication can safeguard against direct disclosures, but they do not address disclosures based on inferences made from released data</li>
+      <li>Privacy violations has <span class="b"><b>legal</b></span>, <span class="b"><b>social</b></span>, and <span class="b"><b>technical</b></span> aspects</li>
+      <li>One of the important tools for dealing with privacy violations is <b><span class="b">Differential Privacy</span></b></li>
+    </ul>
+  </div>
+  <div class="fn">
+    <p><sup>5</sup><span class="ba">Latanya Sweeney.</span> “k-anonymity: A model for protecting privacy”. <span class="bv">In: <i>International journal of uncertainty, fuzziness and knowledge-based systems</i> 10.05 (2002). k-anonymity base paper, pp. 557–570</span>.</p>
+  </div>
+  <div class="fnum">11 / 27</div>
+</section>
+
+<section class="frame">
+  <h2 class="ft">Differential Privacy: Motivation</h2>
+  <div class="fb">
+    <ul>
+      <li>Consider a database, containing the private responses of 100 students on their habit of taking tea
+        <figure><img src="pictures/basicSetup.png" alt="Students' database, a trusted curator algorithm with access to the database, and a user (researcher) who sends queries and receives answers" style="--w:174.3"></figure>
+      </li>
+      <li data-s="2">Consider two queries in the database:
+        <ul>
+          <li>What is the total number of students who do take tea?</li>
+          <li>What is the total number of students (excluding row 58) who do take tea?</li>
+        </ul>
+      </li>
+      <li data-s="3"><span class="r">With answers to these queries, analysts can find the private response of the student of row 58</span></li>
+      <li data-s="4"><span class="b"><b>This motivates us to obfuscate answers</b>, <b>before releasing</b>, them so that <span class="b">both answers look identical</span></span></li>
+      <li data-s="5"><span class="r">How much noise to add?</span></li>
+    </ul>
+  </div>
+  <div class="fnum">12 / 27</div>
+</section>
+
+<section class="frame">
+  <h2 class="ft">Quantification of Noise</h2>
+  <div class="fb">
+    <p>One such method proposed, for obfuscating the answer was by <b>Dwork et. al.</b><sup>6</sup> The steps are as follows:</p>
+    <ol>
+      <li data-s="2">List out all possible datasets that differ in exactly one row (<span class="b">also called neighboring datasets</span>)</li>
+      <li data-s="3">Evaluate both the query over all possible neighboring datasets</li>
+      <li data-s="4">Calculate the maximum difference evaluated over all possible pairs of <b>neighboring datasets</b> (<span class="b">also called the sensitivity of the query</span>)</li>
+      <li data-s="5">Calibrate the answer to the query before releasing it by adding noise proportional to the sensitivity</li>
+    </ol>
+    <p data-s="6">This technique was coined as <span class="b">Differential Privacy</span> by the authors</p>
+  </div>
+  <div class="fn">
+    <p><sup>6</sup><span class="ba">Cynthia Dwork et al.</span> “Calibrating noise to sensitivity in private data analysis”. <span class="bv">In: <i>Theory of Cryptography: Third Theory of Cryptography Conference, TCC 2006, New York, NY, USA, March 4-7, 2006. Proceedings 3</i>. Springer. 2006, pp. 265–284</span>.</p>
+  </div>
+  <div class="fnum">13 / 27</div>
+</section>
+
+<section class="frame">
+  <h2 class="ft">Differential Privacy</h2>
+  <div class="fb">
+    <p>Consider the following interactive mechanism to access the database:</p>
+    <figure><img src="pictures/PrivacyDefinition.png" alt="Database D, a trusted curator algorithm A with access to D, and a user (researcher) who sends query q and receives y = Answer + Noise" style="--w:261.45"></figure>
+    <p data-s="2">Also, let <math><mrow><mi class="mathscr">𝒟</mi><mo lspace="0em" rspace="0em" class="tml-prime">′</mo></mrow></math>: Dataset after discarding one row from <math><mi class="mathscr">𝒟</mi></math> <span class="b">(neighboring dataset of <math><mi class="mathscr">𝒟</mi></math>)</span></p>
+    <div data-s="3">
+      <p>The mechanism is said to be <span class="b">Differentially Private</span> if the results of the queries evaluated in the neighboring dataset are very close</p>
+      <p><span class="r">Note:</span> The condition has to be true <b>for all pairs of Neighboring Database</b>, <b>for all queries</b>, and, <b>for all outputs of <math><mi class="mathscr">𝒜</mi></math></b></p>
+    </div>
+  </div>
+  <div class="fnum">14 / 27</div>
+</section>
+
+<section class="frame">
+  <h2 class="ft">Privacy-Utility Trade-off</h2>
+  <div class="fb">
+    <p><b>Two Orthogonal Interests:</b></p>
+    <ul>
+      <li>Utility</li>
+      <li>Privacy</li>
+    </ul>
+    <p data-s="2"><span class="r">Impossible to get both in the worst case</span></p>
+  </div>
+  <div class="fnum">15 / 27</div>
+</section>
+
+<section class="frame">
+  <h2 class="ft">State-of-The-Art Privacy Solutions in Language Model</h2>
+  <div class="fb">
+    <ul>
+      <li>Data Sanitization</li>
+      <li>Differential Privacy
+        <ul>
+          <li>The neighboring dataset is not clearly defined</li>
+          <li>Authors use as per requirement<sup>7</sup></li>
+        </ul>
+      </li>
+      <li>Unlearning</li>
+    </ul>
+  </div>
+  <div class="fn">
+    <p><sup>7</sup><span class="ba">Kunho Kim et al.</span> “Differentially private n-gram extraction”. <span class="bv">In: <i>Advances in Neural Information Processing Systems</i> 34 (2021), pp. 5102–5111</span>.</p>
+  </div>
+  <div class="fnum">16 / 27</div>
+</section>
+
+<section class="frame">
+  <h2 class="ft">Application of Differential Privacy to Language Model</h2>
+  <div class="fb">
+    <p>Privacy techniques applied to language models:</p>
+    <ul>
+      <li>Fully Differentially-Private language model</li>
+      <li>Differentially-private fine-tuning of language models</li>
+      <li><span class="b">Apply Differential Privacy at the prediction stage</span></li>
+    </ul>
+  </div>
+  <div class="fnum">17 / 27</div>
+</section>
+
+<section class="frame">
+  <div class="fb"><p class="huge r">Linkage Attack in Language Models</p></div>
+  <div class="fnum">18 / 27</div>
+</section>
+
+<section class="frame">
+  <h2 class="ft">Linkage Attack</h2>
+  <div class="fb">
+    <ul>
+      <li><b><span class="r">Linkage Attacks</span></b> consists of
+        <ul>
+          <li>An anonymized dataset</li>
+          <li>Extra public information</li>
+        </ul>
+      </li>
+      <li>An adversary tries to extract some <b><span class="b">non-trivial</span></b> information from the anonymized data using some additional information</li>
+    </ul>
+  </div>
+  <div class="fnum">19 / 27</div>
+</section>
+
+<section class="frame">
+  <h2 class="ft">Linkage Attacks I: Massachusetts Health Data</h2>
+  <div class="fb">
+    <p><span class="b"><b>Prof. Latanya Sweeney</b></span> has demonstrated this attack<sup>8</sup></p>
+    <ul>
+      <li><span class="b">Anonymized Data:</span> Medical data of Massachusetts state employees (Name and SSN (Personal identifiers) are removed)</li>
+      <li><span class="r">Additional Information:</span> Voter data</li>
+      <li><span class="r">Information Leaked:</span> Governor's medical records were leaked</li>
+    </ul>
+  </div>
+  <div class="fn">
+    <p><sup>8</sup><span class="ba">Latanya Sweeney.</span> “Weaving technology and policy together to maintain confidentiality”. <span class="bv">In: <i>The Journal of Law, Medicine &amp; Ethics</i> 25.2-3 (1997). Massachusetts Health Data, pp. 98–110</span>.</p>
+  </div>
+  <div class="fnum">20 / 27</div>
+</section>
+
+<section class="frame">
+  <h2 class="ft">Linkage Attacks II: Netflix Prize</h2>
+  <div class="fb">
+    <p>Deanonymization of Netflix data was illustrated by Prof. <span class="b"><b>Narayanan</b></span> and Prof. <span class="b"><b>Shmatikov</b></span><sup>9</sup></p>
+    <ul>
+      <li><span class="b">Anonymized Data:</span> Anonymized user ratings (Each row is (user, movie, rating, time) User ID is re-randomized</li>
+      <li><span class="r">Additional Information:</span> Publicly available IMDb data</li>
+      <li><span class="r">Information Leaked:</span> 99% re-identified</li>
+    </ul>
+  </div>
+  <div class="fn">
+    <p><sup>9</sup><span class="ba">Arvind Narayanan and Vitaly Shmatikov.</span> “Robust de-anonymization of large sparse datasets”. <span class="bv">In: <i>2008 IEEE Symposium on Security and Privacy (sp 2008)</i>. NetFlix data attack. IEEE. 2008, pp. 111–125</span>.</p>
+  </div>
+  <div class="fnum">21 / 27</div>
+</section>
+
+<section class="frame">
+  <h2 class="ft">Linkage Attacks III: EdX Dataset</h2>
+  <div class="fb">
+    <p>Dr. <span class="b"><b>Aloni Cohen</b></span> demonstrated the following attack<sup>10</sup></p>
+    <ul>
+      <li><span class="b">Anonymized Data:</span> anonymized student data (Each row has demographics, course activities/outcomes Anonymization using a subset of attributes)</li>
+      <li><span class="r">Additional Information:</span> LinkedIn side-information</li>
+      <li><span class="r">Information Leaked:</span> A few students re-identified</li>
+    </ul>
+  </div>
+  <div class="fn">
+    <p><sup>10</sup><span class="ba">Aloni Cohen.</span> “Attacks on Deidentification’s Defenses”. <span class="bv">In: <i>31st USENIX Security Symposium (USENIX Security 22)</i>. Edx linkage attack. 2022, pp. 1469–1486</span>.</p>
+  </div>
+  <div class="fnum">22 / 27</div>
+</section>
+
+<section class="frame">
+  <h2 class="ft">Conclusion</h2>
+  <div class="fb">
+    <ul>
+      <li>Attacks compromise the privacy of sensitive information in Language Models</li>
+      <li data-s="2">Differential privacy is one solution to address these issues We have identified an area for further exploration</li>
+    </ul>
+  </div>
+  <div class="fnum">23 / 27</div>
+</section>
+
+<section class="frame">
+  <h2 class="ft">Reference I</h2>
+  <div class="fb top">
+    <ol class="bib">
+      <li><span class="bl">[1]</span><span class="ba">Raef Bassily, Adam Smith, and Abhradeep Thakurta.</span> “Private empirical risk minimization: Efficient algorithms and tight error bounds”. <span class="bv">In: <i>2014 IEEE 55th annual symposium on foundations of computer science</i>.</span> IEEE. 2014, pp. 464–473.</li>
+      <li><span class="bl">[2]</span><span class="ba">Nicholas Carlini et al.</span> “Membership inference attacks from first principles”. <span class="bv">In: <i>IEEE Symposium on Security and Privacy</i>.</span> IEEE. 2022, pp. 1897–1914.</li>
+      <li><span class="bl">[3]</span><span class="ba">Nicholas Carlini et al.</span> “The Secret Sharer: Evaluating and Testing Unintended Memorization in Neural Networks.”. <span class="bv">In: <i>USENIX Security Symposium</i>. Vol. 267. 2019.</span></li>
+      <li><span class="bl">[4]</span><span class="ba">Aloni Cohen.</span> “Attacks on Deidentification’s Defenses”. <span class="bv">In: <i>31st USENIX Security Symposium (USENIX Security 22)</i>. Edx linkage attack. 2022, pp. 1469–1486.</span></li>
+      <li><span class="bl">[5]</span><span class="ba">Cynthia Dwork et al.</span> “Calibrating noise to sensitivity in private data analysis”. <span class="bv">In: <i>Theory of Cryptography: Third Theory of Cryptography Conference, TCC 2006, New York, NY, USA, March 4-7, 2006. Proceedings 3</i>.</span> Springer. 2006, <span class="bv">pp. 265–284.</span></li>
+    </ol>
+  </div>
+  <div class="fnum">24 / 27</div>
+</section>
+
+<section class="frame">
+  <h2 class="ft">Reference II</h2>
+  <div class="fb top">
+    <ol class="bib">
+      <li><span class="bl">[6]</span><span class="ba">Cynthia Dwork et al.</span> “Our data, ourselves: Privacy via distributed noise generation”. <span class="bv">In: <i>Advances in Cryptology-EUROCRYPT 2006: 24th Annual International Conference on the Theory and Applications of Cryptographic Techniques, St. Petersburg, Russia, May 28-June 1, 2006. Proceedings 25</i>. Springer. 2006, pp. 486–503.</span></li>
+      <li><span class="bl">[7]</span><span class="ba">Shiva Prasad Kasiviswanathan et al.</span> “What can we learn privately?” <span class="bv">In: <i>SIAM Journal on Computing</i> 40.3 (2011), pp. 793–826.</span></li>
+      <li><span class="bl">[8]</span><span class="ba">Kunho Kim et al.</span> “Differentially private n-gram extraction”. <span class="bv">In: <i>Advances in Neural Information Processing Systems</i> 34 (2021), pp. 5102–5111.</span></li>
+      <li><span class="bl">[9]</span><span class="ba">Ilya Mironov.</span> “Rényi differential privacy”. <span class="bv">In: <i>2017 IEEE 30th computer security foundations symposium (CSF)</i>. IEEE. 2017, pp. 263–275.</span></li>
+      <li><span class="bl">[10]</span><span class="ba">Arvind Narayanan and Vitaly Shmatikov.</span> “Robust de-anonymization of large sparse datasets”. <span class="bv">In: <i>2008 IEEE Symposium on Security and Privacy (sp 2008)</i>. NetFlix data attack. IEEE. 2008, pp. 111–125.</span></li>
+    </ol>
+  </div>
+  <div class="fnum">25 / 27</div>
+</section>
+
+<section class="frame">
+  <h2 class="ft">Reference III</h2>
+  <div class="fb top">
+    <ol class="bib">
+      <li><span class="bl">[11]</span><span class="ba">Helen Nissenbaum.</span> “Privacy as contextual integrity”. <span class="bv">In: <i>Wash. L. Rev.</i> 79 (2004), p. 119.</span></li>
+      <li><span class="bl">[12]</span><span class="ba">Ohad Shamir and Tong Zhang.</span> “Stochastic gradient descent for non-smooth optimization: Convergence results and optimal averaging schemes”. <span class="bv">In: <i>International conference on machine learning</i>. PMLR. 2013, pp. 71–79.</span></li>
+      <li><span class="bl">[13]</span><span class="ba">Reza Shokri et al.</span> “Membership inference attacks against machine learning models”. <span class="bv">In: <i>2017 IEEE symposium on security and privacy (SP)</i>. IEEE. 2017, pp. 3–18.</span></li>
+      <li><span class="bl">[14]</span><span class="ba">Latanya Sweeney.</span> “k-anonymity: A model for protecting privacy”. <span class="bv">In: <i>International journal of uncertainty, fuzziness and knowledge-based systems</i> 10.05 (2002). k-anonymity base paper, pp. 557–570.</span></li>
+      <li><span class="bl">[15]</span><span class="ba">Latanya Sweeney.</span> “Weaving technology and policy together to maintain confidentiality”. <span class="bv">In: <i>The Journal of Law, Medicine &amp; Ethics</i> 25.2-3 (1997). Massachusetts Health Data, pp. 98–110.</span></li>
+    </ol>
+  </div>
+  <div class="fnum">26 / 27</div>
+</section>
+
+<section class="frame">
+  <div class="fb"><p class="huge r">Thank You</p></div>
+  <div class="fnum">27 / 27</div>
+</section>
+
+<section class="frame plain">
+  <h2 class="ft">Appendix I</h2>
+  <div class="fb"><p class="huge r">Differential Privacy</p></div>
+</section>
+
+<section class="frame plain">
+  <h2 class="ft">Different Perturbation Methods</h2>
+  <div class="fb">
+    <ul>
+      <li>Noise is added to the answer before sending it to the analyst <span class="b">(Output perturbation)</span></li>
+      <li data-s="2">Noise added to the data before computation <span class="b">(Input perturbation)</span> [7]<sup>11</sup>
+        <figure><img src="pics2/LDP.png" alt="Data owners add noise to their data before it reaches the database D; the curator algorithm A answers query q from the user (researcher) with y = Answer" style="--w:322.2"></figure>
+      </li>
+      <li data-s="3"><b>Another variation, in the domain of machine learning:</b> Noise is added to the data at the time of computation <span class="b">(Gradient perturbation)</span> [1]<sup>12</sup></li>
+    </ul>
+  </div>
+  <div class="fn">
+    <p><sup>11</sup>Shiva Prasad Kasiviswanathan et al. "What can we learn privately?" In: SIAM Journal on Computing 2011</p>
+    <p><sup>12</sup>Raef Bassily, Adam Smith, and Abhradeep Thakurta. "Private empirical risk minimization: Efficient algorithms and tight error bounds". In: IEEE annual symposium on foundations of computer science. 2014</p>
+  </div>
+</section>
+
+<section class="frame plain">
+  <h2 class="ft">Differential Privacy (Formal Definition)</h2>
+  <div class="fb">
+    <p>Here we will define the formal definition of <span class="b">Differential Privacy</span>. Let:</p>
+    <ul>
+      <li><math><mi class="mathscr">𝒟</mi></math>: Dataset containing personal information</li>
+      <li><math><mrow><mi class="mathscr">𝒟</mi><mo lspace="0em" rspace="0em" class="tml-prime">′</mo></mrow></math>: Dataset after discarding one row from <math><mi class="mathscr">𝒟</mi></math> (<span class="b">Neighboring dataset to <math><mi class="mathscr">𝒟</mi></math> denoted by <math><mrow><mi class="mathscr">𝒟</mi><mo>∼</mo></mrow><mrow><mrow><mi class="mathscr">𝒟</mi><mo lspace="0em" rspace="0em" class="tml-prime">′</mo></mrow></mrow></math></span>)</li>
+      <li><math><mi class="mathscr">𝒜</mi></math>: An algorithm that receives the query from the user, evaluates the query, and, sends the obfuscated answer to the user</li>
+      <li><math><mi class="mathscr">𝒬</mi></math>: Set of all possible queries</li>
+      <li><math><mi class="mathscr">𝒴</mi></math>: Set of all possible outputs of <math><mi class="mathscr">𝒜</mi></math></li>
+      <li><math><mi>ϵ</mi></math>: Privacy budget</li>
+    </ul>
+    <p>Now the <span class="r">algorithm <math><mi class="mathscr">𝒜</mi></math></span> will be called a <span class="b">Differentially Private</span> algorithm, with privacy budget <math><mi>ϵ</mi></math> if,</p>
+    <math display="block" class="tml-display" style="display:block math;"><mrow><mo form="prefix" stretchy="false">|</mo><mrow><mi>log</mi><mo>⁡</mo></mrow><mrow><mo fence="true" form="prefix">[</mo><mfrac><mrow><mi>P</mi><mi>r</mi><mo form="prefix" stretchy="false">[</mo><mi class="mathscr">𝒜</mi><mo form="prefix" stretchy="false">(</mo><mi class="mathscr">𝒟</mi><mo separator="true">,</mo><mi>q</mi><mo form="postfix" stretchy="false">)</mo><mo>=</mo><mi>y</mi><mo form="postfix" stretchy="false" lspace="0em" rspace="0em">]</mo></mrow><mrow><mi>P</mi><mi>r</mi><mo form="prefix" stretchy="false">[</mo><mi class="mathscr">𝒜</mi><mo form="prefix" stretchy="false">(</mo><mrow><mi class="mathscr">𝒟</mi><mo lspace="0em" rspace="0em" class="tml-prime">′</mo></mrow><mo separator="true">,</mo><mi>q</mi><mo form="postfix" stretchy="false">)</mo><mo>=</mo><mi>y</mi><mo form="postfix" stretchy="false" lspace="0em" rspace="0em">]</mo></mrow></mfrac><mo fence="true" form="postfix">]</mo></mrow><mo form="postfix" stretchy="false">|</mo><mo>≤</mo><mi>ϵ</mi><mo separator="true">,</mo><mspace width="0.2222em"></mspace><mi>∀</mi><mi>y</mi><mo>∈</mo><mi class="mathscr">𝒴</mi><mo separator="true">,</mo><mspace width="0.2222em"></mspace><mi>∀</mi><mi>q</mi><mo>∈</mo><mi class="mathscr">𝒬</mi><mo separator="true">,</mo><mspace width="0.2222em"></mspace><mi>∀</mi><mi class="mathscr">𝒟</mi><mo>∼</mo><mrow><mi class="mathscr">𝒟</mi><mo lspace="0em" rspace="0em" class="tml-prime">′</mo></mrow></mrow></math>
+  </div>
+</section>
+
+<section class="frame plain">
+  <h2 class="ft">Relaxation Of Differential Privacy</h2>
+  <div class="fb">
+    <p>Two relaxations of differential privacy have been proposed.</p>
+    <ul>
+      <li><span class="b">Approximate Differential Privacy</span>
+        <ul>
+          <li>One additional parameter is introduced over <span class="b">Differential Privacy</span> to capture the failure probability of the private mechanism; and tried to optimize it [6]<sup>13</sup></li>
+          <li><span class="g">Criterion</span>: <math><mrow><mi>P</mi><mi>r</mi><mo form="prefix" stretchy="false">[</mo><mi class="mathscr">𝒜</mi><mo form="prefix" stretchy="false">(</mo><mi class="mathscr">𝒟</mi><mo separator="true">,</mo><mi>q</mi><mo form="postfix" stretchy="false">)</mo><mo>=</mo><mi>y</mi><mo form="postfix" stretchy="false">]</mo><mo>≤</mo></mrow><mrow><msup><mi>e</mi><mi>ϵ</mi></msup><mi>P</mi><mi>r</mi><mo form="prefix" stretchy="false">[</mo><mi class="mathscr">𝒜</mi><mo form="prefix" stretchy="false">(</mo><mrow><mi class="mathscr">𝒟</mi><mo lspace="0em" rspace="0em" class="tml-prime">′</mo></mrow><mo separator="true">,</mo><mi>q</mi><mo form="postfix" stretchy="false">)</mo><mo>=</mo><mi>y</mi><mo form="postfix" stretchy="false">]</mo><mo>+</mo></mrow><mrow><mi>δ</mi></mrow></math></li>
+        </ul>
+      </li>
+      <li><span class="b">Renyi Differential Privacy</span>
+        <ul>
+          <li>This relaxation tries to address the above issue but with different parameterization <span class="b">Differential Privacy</span> [9]<sup>14</sup></li>
+          <li><span class="g">Criterion</span>: <math><mrow><mi>P</mi><mi>r</mi><mo form="prefix" stretchy="false">[</mo><mi class="mathscr">𝒜</mi><mo form="prefix" stretchy="false">(</mo><mi class="mathscr">𝒟</mi><mo separator="true">,</mo><mi>q</mi><mo form="postfix" stretchy="false">)</mo><mo>=</mo><mi>y</mi><mo form="postfix" stretchy="false">]</mo><mo>≤</mo></mrow><mrow><mo form="prefix" stretchy="false">(</mo><msup><mi>e</mi><mi>ϵ</mi></msup><mi>P</mi><mi>r</mi><mo form="prefix" stretchy="false">[</mo><mi class="mathscr">𝒜</mi><mo form="prefix" stretchy="false">(</mo><mrow><mi class="mathscr">𝒟</mi><mo lspace="0em" rspace="0em" class="tml-prime">′</mo></mrow><mo separator="true">,</mo><mi>q</mi><mo form="postfix" stretchy="false">)</mo><mo>=</mo><mi>y</mi><mo form="postfix" stretchy="false">]</mo><msup><mo form="postfix" stretchy="false">)</mo><mrow><mn>1</mn><mo>−</mo><mfrac><mn>1</mn><mi>α</mi></mfrac></mrow></msup></mrow></math></li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+  <div class="fn">
+    <p><sup>13</sup>Cynthia Dwork et al. "Our data, ourselves: Privacy via distributed noise generation". In: EUROCRYPT 2006</p>
+    <p><sup>14</sup>Ilya Mironov. "Renyi differential privacy". In: CSF 2017</p>
+  </div>
+</section>
+
+<section class="frame plain">
+  <h2 class="ft">SGD detour</h2>
+  <div class="fb">
+    <p>Minimise <math><mi class="mathscr">ℒ</mi></math>, in some parameter space <math><mi class="mathscr">𝒞</mi></math>, where</p>
+    <ul>
+      <li><math><mrow><mi class="mathscr">ℒ</mi><mo lspace="0.2222em" rspace="0.2222em">:</mo></mrow><mrow><mi class="mathscr">𝒞</mi><mo stretchy="false">→</mo></mrow><mrow><mi>ℝ</mi></mrow></math> is a convex function.</li>
+      <li><math><mi class="mathscr">ℒ</mi></math> is L Lipschitz. <math><mrow><mo form="prefix" stretchy="false">‖</mo></mrow><mrow><mo form="prefix" stretchy="false">∇</mo><mi class="mathscr">ℒ</mi><msub><mo form="postfix" stretchy="false">‖</mo><mn>2</mn></msub><mo>≤</mo></mrow><mrow><mi>L</mi></mrow></math></li>
+    </ul>
+    <div class="algo">
+      <p class="algo-cap"><b>Algorithm 1</b> SGD</p>
+      <ol class="lines">
+        <li>Set <math><msub><mi>θ</mi><mn>0</mn></msub></math> in <math><mi class="mathscr">𝒞</mi></math></li>
+        <li><b>for</b> <math><mrow><mi>t</mi><mo>←</mo></mrow><mrow><mn>1</mn><mo form="prefix" stretchy="false">(</mo><mn>1</mn><mo form="postfix" stretchy="false">)</mo><mi>T</mi></mrow></math> <b>do</b></li>
+        <li class="in">Select <math><mrow><mi>i</mi><mo>∈</mo></mrow><mrow><mo form="prefix" stretchy="false">[</mo><mi>n</mi><mo form="postfix" stretchy="false">]</mo></mrow></math> uniformly at random</li>
+        <li class="in"><math><mrow><msub><mi>θ</mi><mi>t</mi></msub><mo>←</mo></mrow><mrow><msub><mi>θ</mi><mrow><mi>t</mi><mo>−</mo><mn>1</mn></mrow></msub><mo>−</mo></mrow><mrow><mi>η</mi><mo>∇</mo><mi class="mathscr">ℒ</mi><mo form="prefix" stretchy="false">(</mo><msub><mi>θ</mi><mrow><mi>t</mi><mo>−</mo><mn>1</mn></mrow></msub><mo separator="true">,</mo><mi>D</mi><mo form="postfix" stretchy="false">)</mo></mrow></math></li>
+        <li><b>end for</b></li>
+        <li><b>return</b> <math><mrow><mover><mi>θ</mi><mo stretchy="false" class="tml-capshift" style="math-style:normal;math-depth:0;">^</mo></mover><mo>=</mo></mrow><mrow><msub><mi>θ</mi><mi>T</mi></msub></mrow></math></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<section class="frame plain">
+  <h2 class="ft">Noisy SGD</h2>
+  <div class="fb">
+    <p>Shamir et. al. [2013] [12] investigated the noisy version of SGD.</p>
+    <div class="thm" data-s="2">
+      <p class="thm-title">Theorem (Noisy SGD)</p>
+      <p>Let <math><mi class="mathscr">ℒ</mi></math> be a convex function and <math><mrow><msup><mi>θ</mi><mo>*</mo></msup><mo>=</mo></mrow><mrow><mrow><mi>arg</mi><mo>⁡</mo><mspace width="0.1667em"></mspace></mrow><msub><mi>min</mi><mrow><mi>θ</mi><mo>∈</mo><mi class="mathscr">𝒞</mi></mrow></msub><mo>⁡</mo><mspace width="0.1667em"></mspace></mrow><mrow><mrow><mi class="mathscr">ℒ</mi><mo form="prefix" stretchy="false">(</mo><mi class="mathscr">θ</mi><mo form="postfix" stretchy="false" lspace="0em" rspace="0em">)</mo></mrow></mrow></math>. Let <math><msub><mi>θ</mi><mn>0</mn></msub></math> be an arbitary point in <math><mi class="mathscr">𝒞</mi></math> and <math><mrow><msub><mi>θ</mi><mi>t</mi></msub><mo>=</mo></mrow><mrow><msub><mi>θ</mi><mrow><mi>t</mi><mo>−</mo><mn>1</mn></mrow></msub><mo>−</mo></mrow><mrow><mi>η</mi><mi class="mathscr">𝒢</mi><mo form="prefix" stretchy="false">(</mo><msub><mi>θ</mi><mrow><mi>t</mi><mo>−</mo><mn>1</mn></mrow></msub><mo form="postfix" stretchy="false">)</mo></mrow></math>, where <math><mrow><mi>𝔼</mi><mo form="prefix" stretchy="false">[</mo><mi class="mathscr">𝒢</mi><mo form="prefix" stretchy="false">(</mo><msub><mi>θ</mi><mrow><mi>t</mi><mo>−</mo><mn>1</mn></mrow></msub><mo form="postfix" stretchy="false">)</mo><mo form="postfix" stretchy="false">]</mo><mo>=</mo></mrow><mrow><mo form="prefix" stretchy="false">∇</mo><mi class="mathscr">ℒ</mi><mo form="prefix" stretchy="false">(</mo><msub><mi>θ</mi><mrow><mi>t</mi><mo>−</mo><mn>1</mn></mrow></msub><mo form="postfix" stretchy="false">)</mo></mrow></math> and <math><mrow><mi>𝔼</mi><mo form="prefix" stretchy="false">[</mo><mo form="prefix" stretchy="false">‖</mo><mi class="mathscr">𝒢</mi><mo form="prefix" stretchy="false">(</mo><msub><mi>θ</mi><mrow><mi>t</mi><mo>−</mo><mn>1</mn></mrow></msub><mo form="postfix" stretchy="false">)</mo><msubsup><mo form="postfix" stretchy="false">‖</mo><mn>2</mn><mn>2</mn></msubsup><mo form="postfix" stretchy="false">]</mo><mo>≤</mo></mrow><mrow><msup><mi>G</mi><mn>2</mn></msup></mrow></math>, and the learning rate function <math><mrow><mi>η</mi><mo form="prefix" stretchy="false">(</mo><mi>t</mi><mo form="postfix" stretchy="false">)</mo><mo>=</mo></mrow><mrow><mfrac><mrow><mo form="prefix" stretchy="false" lspace="0em" rspace="0em">‖</mo><mi class="mathscr">𝒞</mi><msub><mo form="postfix" stretchy="false">‖</mo><mn>2</mn></msub></mrow><mrow><mi>G</mi><msqrt><mi>t</mi></msqrt></mrow></mfrac></mrow></math>. Then for any <math><mrow><mi>T</mi><mo>≥</mo></mrow><mrow><mn>0</mn></mrow></math>, we have the following:</p>
+      <math display="block" class="tml-display" style="display:block math;"><mrow><mi>𝔼</mi><mo form="prefix" stretchy="false">[</mo><mi class="mathscr">ℒ</mi><mo form="prefix" stretchy="false">(</mo><msub><mi>θ</mi><mi>T</mi></msub><mo form="postfix" stretchy="false">)</mo><mo>−</mo><mi class="mathscr">ℒ</mi><mo form="prefix" stretchy="false">(</mo><msup><mi>θ</mi><mo form="prefix" stretchy="false">*</mo></msup><mo form="postfix" stretchy="false">)</mo><mo form="postfix" stretchy="false">]</mo><mo>=</mo><mi class="mathcal">𝒪</mi><mrow><mo fence="true" form="prefix">(</mo><mfrac><mrow><mo form="prefix" stretchy="false" lspace="0em" rspace="0em">‖</mo><mi class="mathscr">𝒞</mi><mo form="postfix" stretchy="false">‖</mo><mi>G</mi><mrow><mspace width="0.1667em"></mspace><mi>log</mi><mo>⁡</mo><mspace width="0.1667em"></mspace></mrow><mi>T</mi></mrow><msqrt><mi>T</mi></msqrt></mfrac><mo fence="true" form="postfix">)</mo></mrow></mrow></math>
+    </div>
+    <p data-s="3">As differential privacy secures privacy by adding noise, this result is useful in the domain of differential privacy.</p>
+  </div>
+</section>
+
+<section class="frame plain">
+  <h2 class="ft">DPSGD Part 1</h2>
+  <div class="fb">
+    <p>Bassily, Smith, and Thakurta [2014] [1] used the previous result to come up with a <b>DP</b> version of <b>SGD</b>.</p>
+    <div class="algo" data-s="2">
+      <p class="algo-cap"><b>Algorithm 2</b> DP SGD</p>
+      <ol class="lines">
+        <li><math><mrow><msup><mi>σ</mi><mn>2</mn></msup><mo>←</mo></mrow><mrow><mi>K</mi></mrow></math> <span class="cm"><math><mo lspace="0em" rspace="0em">▹</mo></math> K is chosen appropriately</span></li>
+        <li>Set <math><msub><mi>θ</mi><mn>0</mn></msub></math> in <math><mi class="mathscr">𝒞</mi></math> at random</li>
+        <li><b>for</b> <math><mrow><mi>t</mi><mo>←</mo></mrow><mrow><mn>1</mn><mo form="prefix" stretchy="false">(</mo><mn>1</mn><mo form="postfix" stretchy="false">)</mo><msup><mi>n</mi><mn>2</mn></msup></mrow></math> <b>do</b></li>
+        <li class="in">Select <math><mrow><mi>i</mi><mo>∈</mo></mrow><mrow><mo form="prefix" stretchy="false">[</mo><mi>n</mi><mo form="postfix" stretchy="false">]</mo></mrow></math> uniformly at random</li>
+        <li class="in"><math><mrow><msub><mi>θ</mi><mi>t</mi></msub><mo>←</mo></mrow><mrow><msub><mi>θ</mi><mrow><mi>t</mi><mo>−</mo><mn>1</mn></mrow></msub><mo>−</mo></mrow><mrow><mi>η</mi><mo form="prefix" stretchy="false">(</mo><mi>n</mi><mo>∇</mo><mi class="mathscr">ℒ</mi><mo form="prefix" stretchy="false">(</mo><msub><mi>θ</mi><mrow><mi>t</mi><mo>−</mo><mn>1</mn></mrow></msub><mo separator="true">,</mo><mi>D</mi><mo form="postfix" stretchy="false">)</mo><mo>+</mo><msub><mi>b</mi><mrow><mi>t</mi><mo>−</mo><mn>1</mn></mrow></msub><mo form="postfix" stretchy="false">)</mo></mrow></math> <span class="cm"><math><mo lspace="0em" rspace="0em">▹</mo></math> <math><mrow><msub><mi>b</mi><mrow><mi>t</mi><mo>−</mo><mn>1</mn></mrow></msub><mo>∼</mo></mrow><mrow><mi class="mathscr">𝒩</mi><mo form="prefix" stretchy="false">(</mo><mn>0</mn><mo separator="true">,</mo><msup><mi>σ</mi><mn>2</mn></msup><mi>I</mi><mo form="postfix" stretchy="false">)</mo></mrow></math></span></li>
+        <li><b>end for</b></li>
+        <li><b>return</b> <math><mrow><mover><mi>θ</mi><mo stretchy="false" class="tml-capshift" style="math-style:normal;math-depth:0;">^</mo></mover><mo>=</mo></mrow><mrow><msub><mi>θ</mi><msup><mi>n</mi><mn>2</mn></msup></msub></mrow></math></li>
+      </ol>
+    </div>
+    <p data-s="3">The authors proved this algorithm is differentially private.</p>
+  </div>
+</section>
