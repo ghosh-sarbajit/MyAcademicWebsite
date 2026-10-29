@@ -69,4 +69,19 @@ sections:
         exclude_featured: false
     design:
       view: citation
+  # Preprints and papers under review. Put each one in its own folder in content/preprints/
+  # (copy content/publications/conference-paper/ as a start, with publication_types: ['article']
+  # and publication: 'Under review' or 'arXiv preprint'), then remove the # in front of the
+  # lines below. They are kept off until then because the block shows its title even when empty.
+  # - block: collection
+  #   id: preprints
+  #   content:
+  #     title: Preprints & Under Review
+  #     text: ''
+  #     count: 0
+  #     filters:
+  #       folders:
+  #         - preprints
+  #   design:
+  #     view: citation
 ---

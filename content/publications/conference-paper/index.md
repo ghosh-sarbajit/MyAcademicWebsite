@@ -36,9 +36,25 @@ hugoblox:
   ids:
     doi: '10.1007/978-3-031-25538-0_41'
 
+# Buttons under the paper. The DOI button comes from hugoblox.ids.doi above and Cite from
+# cite.bib in this folder. A PDF named conference-paper.pdf in this folder gets a PDF button
+# by itself. Remove the # to add the others:
 links:
   - type: source
     url: https://doi.org/10.1007/978-3-031-25538-0_41
+  # - type: pdf
+  #   url: uploads/rani2022generalized.pdf   # an author copy in static/uploads/
+  # - type: code
+  #   url: https://github.com/<user>/<repo>
+  # - type: slides
+  #   url: writing/<deck>/                   # an HTML deck in Writing, or a PDF
+  # - type: poster
+  #   url: uploads/<poster>.pdf
+  # - type: video
+  #   url: https://www.youtube.com/watch?v=<id>
+  # - type: preprint
+  #   provider: arxiv
+  #   id: '<arXiv id>'
 
 projects: []
 ---
