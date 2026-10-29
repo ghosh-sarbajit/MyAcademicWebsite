@@ -1,0 +1,54 @@
+{{- /* Upcoming conferences; front matter "list" picks the conferences in static/apps/conferences.js. */ -}}
+<div data-app="conferences" data-list="{{ .Params.list }}">
+
+  <section class="block" id="upcoming">
+    <div class="wrap block-grid">
+      <div class="rail"><span class="num">01</span><h2>Conferences</h2></div>
+      <div class="body">
+        <form class="toolbar" data-tools>
+          <label>CORE rank <select name="group"></select></label>
+          <label>Show <select name="show">
+            <option value="upcoming">Upcoming</option><option value="past">Past</option><option value="all">Upcoming and past</option></select></label>
+          <label>Sort by <select name="sort">
+            <option value="deadline">Next deadline</option><option value="date">Conference date</option></select></label>
+        </form>
+        <p class="meta small" data-meta aria-live="polite">Reading the community list…</p>
+        <div class="confs" data-list></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="source">
+    <div class="wrap block-grid">
+      <div class="rail"><span class="num">02</span><h2>Source</h2></div>
+      <div class="body">
+        {{- if eq .Params.list "ml" }}
+        <p>The dates come from <a href="https://ccfddl.com" target="_blank" rel="noopener">CCF Deadlines</a> (ccfddl.com), a list kept up to date by the research community.
+          This page reads each conference's file in its repository,
+          <a href="https://github.com/ccfddl/ccf-deadlines/tree/main/conference" target="_blank" rel="noopener"><code>conference/</code></a>,
+          each time it opens, so a new edition appears here as soon as it is added there.
+          FAccT is not in that list; its dates come from Hugging Face's
+          <a href="https://huggingface.co/spaces/huggingface/ai-deadlines" target="_blank" rel="noopener">AI Deadlines</a>
+          (<a href="https://github.com/huggingface/ai-deadlines/blob/main/src/data/conferences/facct.yml" target="_blank" rel="noopener"><code>facct.yml</code></a>).
+          ITCS is in neither list yet.</p>
+        <p>If a date is missing or wrong, anyone can correct it with a pull request to
+          <a href="https://github.com/ccfddl/ccf-deadlines" target="_blank" rel="noopener">github.com/ccfddl/ccf-deadlines</a>
+          or <a href="https://github.com/huggingface/ai-deadlines" target="_blank" rel="noopener">github.com/huggingface/ai-deadlines</a>.</p>
+        <p class="hint">Deadlines are shown in the time zone the list gives (AoE is UTC−12), and also in your own time.
+          Check the conference website before you submit.</p>
+        {{- else }}
+        <p>The dates come from <a href="https://sec-deadlines.github.io" target="_blank" rel="noopener">Security and Privacy Deadlines</a>
+          (sec-deadlines.github.io), a list kept up to date by the security and privacy community.
+          This page reads its data file,
+          <a href="https://github.com/sec-deadlines/sec-deadlines.github.io/blob/master/_data/conferences.yml" target="_blank" rel="noopener"><code>_data/conferences.yml</code></a>,
+          each time it opens, so a new edition appears here as soon as it is added there.</p>
+        <p>If a date is missing or wrong, anyone can correct it with a pull request to
+          <a href="https://github.com/sec-deadlines/sec-deadlines.github.io" target="_blank" rel="noopener">github.com/sec-deadlines/sec-deadlines.github.io</a>.</p>
+        <p class="hint">Deadlines are Anywhere on Earth (AoE, UTC−12) unless another time zone is shown, and also given in your own time.
+          The list notes abstract registration in a comment (for example "1 week before deadline"); the abstract deadlines here are worked out from it.
+          Check the conference website before you submit.</p>
+        {{- end }}
+      </div>
+    </div>
+  </section>
+</div>

@@ -19,13 +19,13 @@ workflow builds the site and publishes it.
 | Publications | `content/publications/<paper>/index.md` + `cite.bib` |
 | Writing (essays) | `content/writing/<post>/index.md` |
 | Writing page design | `layouts/writing/`, `static/writing/style.css` |
-| Apps (Literature Finder, Citation Download, Conference Dates) | `content/apps/`, `layouts/apps/`, `layouts/_partials/apps/`, `static/apps/` |
+| Apps (Literature Finder, Citation Download, Upcoming Security/ML Conferences) | `content/apps/`, `layouts/apps/`, `layouts/_partials/apps/`, `static/apps/` |
 | Site name, SEO, theme | `config/_default/params.yaml` |
 | Navigation menu | `config/_default/menus.yaml` |
 
 ## Apps
 
-The **Apps** menu holds three tools that run entirely in the visitor's browser. The first two are JavaScript versions of
+The **Apps** menu holds four tools that run entirely in the visitor's browser. The first two are JavaScript versions of
 `scrape.py` and `citationDownload.py` from [MyBibliography](https://github.com/ghosh-sarbajit/MyBibliography):
 
 - **Literature Finder** (`static/apps/literature-finder.js`) searches arXiv for recent papers on the topics in `TOPICS`
@@ -36,11 +36,14 @@ The **Apps** menu holds three tools that run entirely in the visitor's browser. 
   (DBLP, OpenReview, Crossref, Semantic Scholar, arXiv, OpenAlex, PMLR, NeurIPS; not Google Scholar) and downloads the
   new entries per topic file. "Get BibTeX" in the Literature Finder hands the selected titles over.
 
-- **Conference Dates** (`static/apps/conference-dates.js`) shows the next edition of twelve CORE A*/A security
-  conferences (the list is `CONFERENCES` in the script): dates, place, submission deadlines and days left. It reads
-  `_data/conferences.yml` from the community-maintained [sec-deadlines.github.io](https://sec-deadlines.github.io) list
-  ([repository](https://github.com/sec-deadlines/sec-deadlines.github.io)) each time it opens, so new editions need no
-  change here; missing or wrong dates are fixed with a pull request to that repository.
+- **Upcoming Security Conferences** and **Upcoming ML Conferences** (`static/apps/conferences.js`, one page each with
+  `list: security` or `list: ml` in the front matter) show the next edition of each conference in `LISTS`: dates,
+  place, submission deadlines and the days left to register the abstract and to submit, with a filter for upcoming
+  or past editions. The dates are read each time the page opens from community-maintained lists on GitHub, so new
+  editions need no change here: [sec-deadlines.github.io](https://github.com/sec-deadlines/sec-deadlines.github.io)
+  for security, [CCF Deadlines](https://github.com/ccfddl/ccf-deadlines) for machine learning (FAccT from Hugging
+  Face's [AI Deadlines](https://github.com/huggingface/ai-deadlines)). Missing or wrong dates are fixed with a pull
+  request to those repositories.
 
 Visitors can load their `.bib` files so known papers are skipped; only titles and keys are kept, in their browser.
 Services that do not allow cross-site requests are reached through public CORS proxies, or a proxy set under *Settings*.

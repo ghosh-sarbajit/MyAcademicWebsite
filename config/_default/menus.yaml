@@ -27,10 +27,14 @@ main:
     parent: apps
     url: apps/citation-download/
     weight: 2
-  - name: Conference Dates
+  - name: Upcoming Security Conferences
     parent: apps
-    url: apps/conference-dates/
+    url: apps/security-conferences/
     weight: 3
+  - name: Upcoming ML Conferences
+    parent: apps
+    url: apps/ml-conferences/
+    weight: 4
   - name: All apps
     parent: apps
     url: apps/
