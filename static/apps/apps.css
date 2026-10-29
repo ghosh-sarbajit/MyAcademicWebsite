@@ -224,6 +224,8 @@ pre.bibtex{
 .conf-when{margin:0 0 8px!important;font-size:.96rem;}
 .rank,.label{font-family:var(--mono);font-size:.66rem;letter-spacing:.06em;text-transform:uppercase;}
 .rank{color:var(--accent-2);background:var(--accent-soft);padding:2px 8px;border-radius:4px;font-weight:500;white-space:nowrap;}
+a.rank{text-decoration:none;vertical-align:middle;}
+a.rank:hover,a.rank:focus-visible{color:var(--paper);background:var(--accent-2);}
 .label{color:var(--muted);margin:10px 0 4px!important;}
 ul.deadlines{list-style:none;margin:0 0 8px;padding:0;font-size:.92rem;}
 ul.deadlines li{padding:3px 0 3px 12px;border-left:2px solid var(--rule);}

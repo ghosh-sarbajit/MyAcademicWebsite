@@ -33,53 +33,58 @@
     },
   };
 
-  // [short name, full name, CORE rank, group, DBLP key, source, entry in the source]
-  const conf = rows => rows.map(([short, full, rank, group, dblp, from, key]) => ({ short, full, rank, group, dblp, from, key }));
+  // [short name, full name, group, DBLP key, source, entry in the source, CORE search term]
+  // The rank is not kept here: each card links to a search of the CORE portal, which has
+  // the current rank. The search term defaults to the short name without the publisher.
+  const conf = rows => rows.map(([short, full, group, dblp, from, key, core]) =>
+    ({ short, full, group, dblp, from, key, core: core || short.replace(/^(IEEE\/IFIP|IEEE|ACM) /, '') }));
+  const CORE_SOURCE = 'ICORE2026';
+  const coreSearch = c => `https://portal.core.edu.au/conf-ranks/?search=${encodeURIComponent(c.core)}&by=all&source=${CORE_SOURCE}&sort=atitle&page=1`;
   const LISTS = {
     security: {
       groups: [['all', 'A* and A'], ['A*', 'A* only'], ['A', 'A only']],
       conferences: conf([
-        ['IEEE S&P', 'IEEE Symposium on Security and Privacy', 'A*', 'A*', 'sp', 'sec', 'S&P (Oakland)'],
-        ['ACM CCS', 'ACM Conference on Computer and Communications Security', 'A*', 'A*', 'ccs', 'sec', 'CCS'],
-        ['USENIX Security', 'USENIX Security Symposium', 'A*', 'A*', 'uss', 'sec', 'USENIX Security'],
-        ['IEEE EuroS&P', 'IEEE European Symposium on Security and Privacy', 'A', 'A', 'eurosp', 'sec', 'Euro S&P'],
-        ['ESORICS', 'European Symposium on Research in Computer Security', 'A', 'A', 'esorics', 'sec', 'ESORICS'],
-        ['PETS / PoPETs', 'Privacy Enhancing Technologies Symposium', 'A', 'A', 'pet', 'sec', 'PETS'],
-        ['ACSAC', 'Annual Computer Security Applications Conference', 'A', 'A', 'acsac', 'sec', 'ACSAC'],
-        ['RAID', 'International Symposium on Research in Attacks, Intrusions and Defenses', 'A', 'A', 'raid', 'sec', 'RAID'],
-        ['ACM AsiaCCS', 'ACM Asia Conference on Computer and Communications Security', 'A', 'A', 'asiaccs', 'sec', 'ASIA CCS'],
-        ['IEEE CSF', 'IEEE Computer Security Foundations Symposium', 'A', 'A', 'csfw', 'sec', 'CSF'],
-        ['SOUPS', 'Symposium on Usable Privacy and Security', 'A', 'A', 'soups', 'sec', 'SOUPS'],
-        ['IEEE/IFIP DSN', 'International Conference on Dependable Systems and Networks', 'A', 'A', 'dsn', 'sec', 'DSN'],
+        ['IEEE S&P', 'IEEE Symposium on Security and Privacy', 'A*', 'sp', 'sec', 'S&P (Oakland)'],
+        ['ACM CCS', 'ACM Conference on Computer and Communications Security', 'A*', 'ccs', 'sec', 'CCS'],
+        ['USENIX Security', 'USENIX Security Symposium', 'A*', 'uss', 'sec', 'USENIX Security'],
+        ['IEEE EuroS&P', 'IEEE European Symposium on Security and Privacy', 'A', 'eurosp', 'sec', 'Euro S&P'],
+        ['ESORICS', 'European Symposium on Research in Computer Security', 'A', 'esorics', 'sec', 'ESORICS'],
+        ['PETS / PoPETs', 'Privacy Enhancing Technologies Symposium', 'A', 'pet', 'sec', 'PETS', 'PETS'],
+        ['ACSAC', 'Annual Computer Security Applications Conference', 'A', 'acsac', 'sec', 'ACSAC'],
+        ['RAID', 'International Symposium on Research in Attacks, Intrusions and Defenses', 'A', 'raid', 'sec', 'RAID'],
+        ['ACM AsiaCCS', 'ACM Asia Conference on Computer and Communications Security', 'A', 'asiaccs', 'sec', 'ASIA CCS'],
+        ['IEEE CSF', 'IEEE Computer Security Foundations Symposium', 'A', 'csfw', 'sec', 'CSF'],
+        ['SOUPS', 'Symposium on Usable Privacy and Security', 'A', 'soups', 'sec', 'SOUPS'],
+        ['IEEE/IFIP DSN', 'International Conference on Dependable Systems and Networks', 'A', 'dsn', 'sec', 'DSN'],
       ]),
     },
     ml: {
       groups: [['all', 'All'], ['ml', 'A*: ML, AI & NLP'], ['theory', 'A*: Theory & Foundations'], ['a', 'A: ML, Theory, Data & NLP']],
       labels: { ml: 'ML, AI & NLP', theory: 'Theory', a: 'ML, Theory, Data & NLP' },
       conferences: conf([
-        ['NeurIPS', 'Conference on Neural Information Processing Systems', 'A*', 'ml', 'nips', 'ccf', 'AI/nips'],
-        ['ICML', 'International Conference on Machine Learning', 'A*', 'ml', 'icml', 'ccf', 'AI/icml'],
-        ['ICLR', 'International Conference on Learning Representations', 'A*', 'ml', 'iclr', 'ccf', 'AI/iclr'],
-        ['AAAI', 'AAAI Conference on Artificial Intelligence', 'A*', 'ml', 'aaai', 'ccf', 'AI/aaai'],
-        ['IJCAI', 'International Joint Conference on Artificial Intelligence', 'A*', 'ml', 'ijcai', 'ccf', 'AI/ijcai'],
-        ['ACM KDD', 'ACM SIGKDD Conference on Knowledge Discovery and Data Mining', 'A*', 'ml', 'kdd', 'ccf', 'DB/sigkdd'],
-        ['ACL', 'Annual Meeting of the Association for Computational Linguistics', 'A*', 'ml', 'acl', 'ccf', 'AI/acl'],
-        ['EMNLP', 'Conference on Empirical Methods in Natural Language Processing', 'A*', 'ml', 'emnlp', 'ccf', 'AI/emnlp'],
-        ['STOC', 'ACM Symposium on Theory of Computing', 'A*', 'theory', 'stoc', 'ccf', 'CT/stoc'],
-        ['FOCS', 'IEEE Symposium on Foundations of Computer Science', 'A*', 'theory', 'focs', 'ccf', 'CT/focs'],
-        ['COLT', 'Conference on Learning Theory', 'A*', 'theory', 'colt', 'ccf', 'AI/colt'],
-        ['SODA', 'ACM-SIAM Symposium on Discrete Algorithms', 'A*', 'theory', 'soda', 'ccf', 'CT/soda'],
-        ['AISTATS', 'International Conference on Artificial Intelligence and Statistics', 'A', 'a', 'aistats', 'ccf', 'AI/aistats'],
-        ['UAI', 'Conference on Uncertainty in Artificial Intelligence', 'A', 'a', 'uai', 'ccf', 'AI/uai'],
-        ['NAACL', 'Annual Conference of the North American Chapter of the ACL', 'A', 'a', 'naacl', 'ccf', 'AI/naacl'],
-        ['EACL', 'Conference of the European Chapter of the ACL', 'A', 'a', 'eacl', 'ccf', 'AI/eacl'],
-        ['COLING', 'International Conference on Computational Linguistics', 'A', 'a', 'coling', 'ccf', 'AI/coling'],
-        ['ECML-PKDD', 'European Conference on Machine Learning and Principles and Practice of Knowledge Discovery in Databases', 'A', 'a', 'pkdd', 'ccf', 'DB/pkdd'],
-        ['ALT', 'International Conference on Algorithmic Learning Theory', 'A', 'a', 'alt', 'ccf', 'AI/alt'],
-        ['ITCS', 'Innovations in Theoretical Computer Science', 'A', 'a', 'innovations', null, null],
-        ['ACM FAccT', 'ACM Conference on Fairness, Accountability, and Transparency', 'A', 'a', 'fat', 'hf', 'facct'],
-        ['CIKM', 'ACM International Conference on Information and Knowledge Management', 'A', 'a', 'cikm', 'ccf', 'DB/cikm'],
-        ['ICDM', 'IEEE International Conference on Data Mining', 'A', 'a', 'icdm', 'ccf', 'DB/icdm'],
+        ['NeurIPS', 'Conference on Neural Information Processing Systems', 'ml', 'nips', 'ccf', 'AI/nips'],
+        ['ICML', 'International Conference on Machine Learning', 'ml', 'icml', 'ccf', 'AI/icml'],
+        ['ICLR', 'International Conference on Learning Representations', 'ml', 'iclr', 'ccf', 'AI/iclr'],
+        ['AAAI', 'AAAI Conference on Artificial Intelligence', 'ml', 'aaai', 'ccf', 'AI/aaai'],
+        ['IJCAI', 'International Joint Conference on Artificial Intelligence', 'ml', 'ijcai', 'ccf', 'AI/ijcai'],
+        ['ACM KDD', 'ACM SIGKDD Conference on Knowledge Discovery and Data Mining', 'ml', 'kdd', 'ccf', 'DB/sigkdd', 'KDD'],
+        ['ACL', 'Annual Meeting of the Association for Computational Linguistics', 'ml', 'acl', 'ccf', 'AI/acl'],
+        ['EMNLP', 'Conference on Empirical Methods in Natural Language Processing', 'ml', 'emnlp', 'ccf', 'AI/emnlp'],
+        ['STOC', 'ACM Symposium on Theory of Computing', 'theory', 'stoc', 'ccf', 'CT/stoc'],
+        ['FOCS', 'IEEE Symposium on Foundations of Computer Science', 'theory', 'focs', 'ccf', 'CT/focs'],
+        ['COLT', 'Conference on Learning Theory', 'theory', 'colt', 'ccf', 'AI/colt'],
+        ['SODA', 'ACM-SIAM Symposium on Discrete Algorithms', 'theory', 'soda', 'ccf', 'CT/soda'],
+        ['AISTATS', 'International Conference on Artificial Intelligence and Statistics', 'a', 'aistats', 'ccf', 'AI/aistats'],
+        ['UAI', 'Conference on Uncertainty in Artificial Intelligence', 'a', 'uai', 'ccf', 'AI/uai'],
+        ['NAACL', 'Annual Conference of the North American Chapter of the ACL', 'a', 'naacl', 'ccf', 'AI/naacl'],
+        ['EACL', 'Conference of the European Chapter of the ACL', 'a', 'eacl', 'ccf', 'AI/eacl'],
+        ['COLING', 'International Conference on Computational Linguistics', 'a', 'coling', 'ccf', 'AI/coling'],
+        ['ECML-PKDD', 'European Conference on Machine Learning and Principles and Practice of Knowledge Discovery in Databases', 'a', 'pkdd', 'ccf', 'DB/pkdd', 'PKDD'],
+        ['ALT', 'International Conference on Algorithmic Learning Theory', 'a', 'alt', 'ccf', 'AI/alt'],
+        ['ITCS', 'Innovations in Theoretical Computer Science', 'a', 'innovations', null, null],
+        ['ACM FAccT', 'ACM Conference on Fairness, Accountability, and Transparency', 'a', 'fat', 'hf', 'facct'],
+        ['CIKM', 'ACM International Conference on Information and Knowledge Management', 'a', 'cikm', 'ccf', 'DB/cikm'],
+        ['ICDM', 'IEEE International Conference on Data Mining', 'a', 'icdm', 'ccf', 'DB/icdm'],
       ]),
     },
   };
@@ -422,7 +427,7 @@
 
   const core = {
     SOURCES, LISTS, parseYaml, stripComment, conferenceDays, parseZone, zoneLabel, deadline, timeLeft,
-    abstractsFromNote, edition, conferences, filesFor, dblpKey,
+    abstractsFromNote, edition, conferences, filesFor, dblpKey, coreSearch,
   };
   if (typeof module !== 'undefined' && module.exports) { module.exports = core; return; }
 
@@ -444,6 +449,8 @@
   const inDays = n => n === 0 ? 'today' : n === 1 ? 'tomorrow' : `in ${n} days`;
   const ago = n => n === 0 ? 'today' : n === 1 ? 'yesterday' : `${n} days ago`;
   const dblp = c => `https://dblp.org/db/conf/${encodeURIComponent(c.dblp)}/index.html`;
+  const rankLink = c => `<a class="rank" href="${esc(coreSearch(c))}" target="_blank" rel="noopener"
+    title="Look up ${esc(c.short)} in the CORE rankings (opens a new tab)">See CORE rank ↗</a>`;
 
   // one deadline in a card; `kind` is "Abstract" or "Paper" when the edition has both
   function deadlineItem(d, x, now, kind) {
@@ -486,7 +493,7 @@
     const name = x ? `${esc(c.short)} ${x.year}` : esc(c.short);
     const area = LIST.labels ? ` <span class="area">${esc(LIST.labels[c.group])}</span>` : '';
     return `<h3 class="pub-title">${x && x.record.link ? `<a href="${esc(x.record.link)}" target="_blank" rel="noopener">${name}</a>` : name}
-      <span class="rank">CORE ${esc(c.rank)}</span>${area}</h3>
+      ${rankLink(c)}${area}</h3>
       <p class="conf-full">${esc(c.full)}</p>`;
   }
 
@@ -597,7 +604,7 @@
     const used = [...new Set(LIST.conferences.map(c => c.from).filter(Boolean))].map(s => SOURCES[s]);
     box.innerHTML = `<p class="notice">The community list could not be reached (${esc(err.message || err)}).
       Try again later, or see the dates on ${used.map(s => `<a href="${s.site}" target="_blank" rel="noopener">${esc(s.site.replace(/^https:\/\//, ''))}</a>`).join(' or ')}.</p>
-      <ul class="fallback">${LIST.conferences.map(c => `<li><b>${esc(c.short)}</b> <span class="rank">CORE ${esc(c.rank)}</span>
+      <ul class="fallback">${LIST.conferences.map(c => `<li><b>${esc(c.short)}</b> ${rankLink(c)}
         ${esc(c.full)} · <a href="${dblp(c)}" target="_blank" rel="noopener">DBLP</a></li>`).join('')}</ul>`;
   }
 
