@@ -27,14 +27,22 @@ main:
     parent: apps
     url: apps/citation-download/
     weight: 2
+  - name: BibTeX Cleaner
+    parent: apps
+    url: apps/bibtex-cleaner/
+    weight: 3
+  - name: DP Budget Calculator
+    parent: apps
+    url: apps/dp-budget/
+    weight: 4
   - name: Upcoming Security Conferences
     parent: apps
     url: apps/security-conferences/
-    weight: 3
+    weight: 5
   - name: Upcoming ML Conferences
     parent: apps
     url: apps/ml-conferences/
-    weight: 4
+    weight: 6
   - name: All apps
     parent: apps
     url: apps/

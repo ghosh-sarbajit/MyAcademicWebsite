@@ -1,4 +1,5 @@
-// Shared helpers for the apps in /apps/ (Literature Finder, Citation Download, Upcoming Security/ML Conferences).
+// Shared helpers for the apps in /apps/ (Literature Finder, Citation Download, BibTeX Cleaner, DP Budget
+// Calculator, Upcoming Security/ML Conferences).
 // The pure functions (normTitle, sim, csv, bib parsing) also load in Node for tests:
 //   const A = require('./common.js');
 (function (root) {

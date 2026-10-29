@@ -19,13 +19,13 @@ workflow builds the site and publishes it.
 | Publications | `content/publications/<paper>/index.md` + `cite.bib` |
 | Writing (essays) | `content/writing/<post>/index.md` |
 | Writing page design | `layouts/writing/`, `static/writing/style.css` |
-| Apps (Literature Finder, Citation Download, Upcoming Security/ML Conferences) | `content/apps/`, `layouts/apps/`, `layouts/_partials/apps/`, `static/apps/` |
+| Apps (Literature Finder, Citation Download, BibTeX Cleaner, DP Budget Calculator, Upcoming Security/ML Conferences) | `content/apps/`, `layouts/apps/`, `layouts/_partials/apps/`, `static/apps/` |
 | Site name, SEO, theme | `config/_default/params.yaml` |
 | Navigation menu | `config/_default/menus.yaml` |
 
 ## Apps
 
-The **Apps** menu holds four tools that run entirely in the visitor's browser. The first two are JavaScript versions of
+The **Apps** menu holds six tools that run entirely in the visitor's browser. The first two are JavaScript versions of
 `scrape.py` and `citationDownload.py` from [MyBibliography](https://github.com/ghosh-sarbajit/MyBibliography):
 
 - **Literature Finder** (`static/apps/literature-finder.js`) searches arXiv for recent papers on the topics in `TOPICS`
@@ -35,11 +35,18 @@ The **Apps** menu holds four tools that run entirely in the visitor's browser. T
 - **Citation Download** (`static/apps/citation-download.js`) turns titles into BibTeX in the bibliography's style
   (DBLP, OpenReview, Crossref, Semantic Scholar, arXiv, OpenAlex, PMLR, NeurIPS; not Google Scholar) and downloads the
   new entries per topic file. "Get BibTeX" in the Literature Finder hands the selected titles over.
+- **BibTeX Cleaner** (`static/apps/bibtex-cleaner.js`) tidies a pasted or opened `.bib` file: removes duplicates
+  (same title, matched as in the scripts), renames clashing keys, sorts, protects capitals in titles, writes authors as
+  "Last, First" and page ranges with `--`, and drops unwanted fields.
+- **DP Budget Calculator** (`static/apps/dp-budget.js`) adds up the (ε, δ) of several differentially private steps by
+  basic and advanced composition and zCDP, and gives the exact and Rényi-DP ε of repeated Gaussian noise, or the noise
+  multiplier needed for a target ε.
 
 - **Upcoming Security Conferences** and **Upcoming ML Conferences** (`static/apps/conferences.js`, one page each with
   `list: security` or `list: ml` in the front matter) show the next edition of each conference in `LISTS`: dates,
   place, submission deadlines and the days left to register the abstract and to submit, with a filter for upcoming
-  or past editions. The dates are read each time the page opens from community-maintained lists on GitHub, so new
+  or past editions. Visitors can star conferences to see only those, and download the deadlines still to come as an
+  `.ics` calendar file, per conference or for all shown. The dates are read each time the page opens from community-maintained lists on GitHub, so new
   editions need no change here: [sec-deadlines.github.io](https://github.com/sec-deadlines/sec-deadlines.github.io)
   for security, [CCF Deadlines](https://github.com/ccfddl/ccf-deadlines) for machine learning (FAccT from Hugging
   Face's [AI Deadlines](https://github.com/huggingface/ai-deadlines)). Missing or wrong dates are fixed with a pull

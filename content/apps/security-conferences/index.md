@@ -1,6 +1,6 @@
 ---
 title: Upcoming Security Conferences
-weight: 3
+weight: 5
 group: Conferences
 app: conferences
 list: security

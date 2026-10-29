@@ -1,6 +1,6 @@
 ---
 title: Upcoming ML Conferences
-weight: 4
+weight: 6
 group: Conferences
 app: conferences
 list: ml

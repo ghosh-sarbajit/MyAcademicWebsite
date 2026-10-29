@@ -268,3 +268,31 @@ ul.fallback li{margin-bottom:6px;}
   .app-card{grid-template-columns:1fr auto;}
   .app-num{grid-column:1/-1;}
 }
+
+/* ---------- DP Budget Calculator ---------- */
+.dp-steps{display:flex;flex-direction:column;gap:10px;margin:0 0 14px;}
+.dp-step{
+  display:grid;grid-template-columns:minmax(0,2fr) repeat(3,minmax(0,1fr)) auto;gap:10px;align-items:end;
+  padding:12px 14px;border:1px solid var(--rule);border-radius:10px;background:var(--card);
+}
+.dp-step label{display:flex;flex-direction:column;gap:6px;font-family:var(--mono);font-size:.76rem;color:var(--ink-2);}
+.dp-step .link-btn{padding-bottom:10px;}
+.dp-results{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:8px 0 10px;}
+.dp-result{border:1px solid var(--rule);border-radius:12px;padding:14px 16px;background:var(--card);}
+.dp-result.best{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft);}
+.dp-result.na{opacity:.6;}
+.dp-result .label{color:var(--accent);margin:0 0 6px;}
+.best-tag{text-transform:none;letter-spacing:0;font-size:.72rem;color:var(--paper);background:var(--accent);padding:1px 7px;border-radius:999px;margin-left:4px;}
+.dp-num{font-family:var(--mono);font-size:.95rem;margin:0 0 6px!important;overflow-wrap:anywhere;}
+.dp-num b{color:var(--ink);font-size:1.05rem;}
+details.custom p{margin:0;font-size:.94rem;line-height:1.65;}
+@media (max-width:640px){
+  .dp-step{grid-template-columns:repeat(3,minmax(0,1fr));}
+  .dp-step label:first-child{grid-column:1 / -1;}
+  .dp-step .link-btn{grid-column:1 / -1;justify-self:start;padding:0;}
+}
+
+/* ---------- BibTeX Cleaner ---------- */
+pre.bib-out{max-height:560px;overflow:auto;white-space:pre-wrap;word-break:break-word;font-size:.76rem;}
+.dups{margin:8px 0 0;padding-left:18px;font-family:var(--sans);font-size:.85rem;}
+.dups li{margin:2px 0;}

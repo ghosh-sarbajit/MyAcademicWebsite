@@ -1,0 +1,72 @@
+{{- /* DP Budget Calculator; the maths is in static/apps/dp-budget.js. */ -}}
+<div data-app="dp-budget">
+
+  <section class="block" id="steps">
+    <div class="wrap block-grid">
+      <div class="rail"><span class="num">01</span><h2>Steps</h2></div>
+      <div class="body">
+        <p class="small">Each step is an (ε, δ)-differentially private mechanism run on the same data, “Times” times. Use δ = 0 for pure ε-DP steps such as the Laplace mechanism.</p>
+        <div class="dp-steps" data-steps></div>
+        <form class="app-form" data-form>
+          <div class="row">
+            <button type="button" class="btn" data-add>Add a step</button>
+            <button type="button" class="link-btn" data-example>load the example</button>
+          </div>
+          <div class="field-row">
+            <label>Slack δ′ <span class="hint">(for advanced composition and zCDP)</span>
+              <input type="number" name="slack" value="1e-5" min="0" max="1" step="any"></label>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="total">
+    <div class="wrap block-grid">
+      <div class="rail"><span class="num">02</span><h2>Total</h2></div>
+      <div class="body">
+        <div data-total aria-live="polite"></div>
+        <p class="hint">Each rule gives a valid guarantee; report the one with the smallest ε, together with its δ.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="gaussian">
+    <div class="wrap block-grid">
+      <div class="rail"><span class="num">03</span><h2>Gaussian noise</h2></div>
+      <div class="body">
+        <p class="small">k steps that each add Gaussian noise with standard deviation σ × (L2 sensitivity), as full-batch DP-SGD does.</p>
+        <form class="app-form" data-gauss>
+          <div class="field-row">
+            <label>Noise multiplier σ <input type="number" name="sigma" value="1.1" min="0" step="any"></label>
+            <label>Steps k <input type="number" name="steps" value="100" min="1" step="1"></label>
+            <label>δ <input type="number" name="delta" value="1e-5" min="0" max="1" step="any"></label>
+            <label>Target ε <span class="hint">(optional: the σ needed)</span>
+              <input type="number" name="target" value="" min="0" step="any" placeholder="e.g. 8"></label>
+          </div>
+        </form>
+        <div data-gauss-out aria-live="polite"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="method">
+    <div class="wrap block-grid">
+      <div class="rail"><span class="num">04</span><h2>Method</h2></div>
+      <div class="body">
+        <details class="custom">
+          <summary>How this is worked out</summary>
+          <p><b>Basic composition.</b> Steps that are (ε<sub>i</sub>, δ<sub>i</sub>)-DP, each run k<sub>i</sub> times, are together (Σ k<sub>i</sub>ε<sub>i</sub>, Σ k<sub>i</sub>δ<sub>i</sub>)-DP.</p>
+          <p><b>Advanced composition</b> (Dwork, Rothblum and Vadhan 2010; Dwork and Roth 2014, Theorem 3.20). For any δ′ &gt; 0 they are
+            (√(2 ln(1/δ′) Σ k<sub>i</sub>ε<sub>i</sub>²) + Σ k<sub>i</sub>ε<sub>i</sub>(e<sup>ε<sub>i</sub></sup> − 1), Σ k<sub>i</sub>δ<sub>i</sub> + δ′)-DP.</p>
+          <p><b>zCDP</b> (Bun and Steinke 2016). An ε-DP step is ε²/2-zCDP, the ρ's add up, and ρ-zCDP is (ρ + 2√(ρ ln(1/δ′)), δ′)-DP. This needs every step to have δ = 0.</p>
+          <p><b>Gaussian, exactly.</b> k Gaussian mechanisms with noise multiplier σ together are μ-Gaussian DP with μ = √k/σ (Dong, Roth and Su 2019), which is (ε, δ)-DP exactly when
+            δ ≥ Φ(−ε/μ + μ/2) − e<sup>ε</sup> Φ(−ε/μ − μ/2) (Balle and Wang 2018). The page solves this for ε, or for σ given a target ε.</p>
+          <p><b>Gaussian, by Rényi DP</b> (Mironov 2017). Order α costs kα/(2σ²), and is converted to
+            ε = RDP + ln((α−1)/α) − (ln δ + ln α)/(α − 1) (Balle et al. 2020, as in Opacus), at the best α. It is never below the exact value, but it is what most DP-SGD papers report.</p>
+        </details>
+        <p class="hint">Everything is worked out in your browser. Your steps are kept in this browser for your next visit.</p>
+      </div>
+    </div>
+  </section>
+</div>

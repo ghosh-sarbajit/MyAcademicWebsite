@@ -1,0 +1,62 @@
+{{- /* BibTeX Cleaner; the parser and the clean-ups are in static/apps/bibtex-cleaner.js. */ -}}
+<div data-app="bibtex-cleaner">
+
+  <section class="block" id="input">
+    <div class="wrap block-grid">
+      <div class="rail"><span class="num">01</span><h2>BibTeX</h2></div>
+      <div class="body">
+        <form class="app-form" data-input>
+          <label>Your .bib file <span class="hint">(paste it here, or open it below)</span>
+            <textarea name="bib" rows="12" spellcheck="false" placeholder="@inproceedings{devlin2019bert,
+  title = {BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding},
+  author = {Jacob Devlin and Ming-Wei Chang and Kenton Lee and Kristina Toutanova},
+  pages = {4171-4186}, year = 2019,
+}"></textarea>
+          </label>
+          <fieldset>
+            <legend>Clean-ups</legend>
+            <div class="toggles">
+              <label class="toggle"><input type="checkbox" name="dedupe" checked><span>Remove duplicates<small>same title, or same key and title</small></span></label>
+              <label class="toggle"><input type="checkbox" name="caps" checked><span>Protect capitals in titles<small>BERT → {BERT}, PyTorch → {PyTorch}</small></span></label>
+              <label class="toggle"><input type="checkbox" name="authors" checked><span>Authors as “Last, First”<small>Ada Lovelace → Lovelace, Ada</small></span></label>
+              <label class="toggle"><input type="checkbox" name="pages" checked><span>Page ranges with --<small>4171-4186 → 4171--4186</small></span></label>
+              <label class="toggle"><input type="checkbox" name="keepText" checked><span>Keep % comment lines<small>left out when sorting</small></span></label>
+            </div>
+          </fieldset>
+          <div class="field-row">
+            <label>Sort entries <select name="sort">
+              <option value="none">Keep the order</option>
+              <option value="key">By key</option>
+              <option value="author">By first author</option>
+              <option value="year">By year, newest first</option>
+            </select></label>
+            <label>Remove these fields <span class="hint">(separated by commas)</span>
+              <input type="text" name="drop" spellcheck="false"
+                value="abstract, keywords, file, timestamp, biburl, bibsource, owner, groups, annote, mendeley-tags"></label>
+          </div>
+          <div class="row">
+            <button type="submit" class="btn primary">Clean</button>
+            <label class="btn ghost file-btn">Open a .bib file<input type="file" accept=".bib,.txt" data-file hidden></label>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="clean" data-results hidden>
+    <div class="wrap block-grid">
+      <div class="rail"><span class="num">02</span><h2>Clean copy</h2></div>
+      <div class="body">
+        <div class="downloads">
+          <div class="small" data-summary aria-live="polite"></div>
+          <div class="row">
+            <button type="button" class="btn primary" data-download>Download .bib</button>
+            <button type="button" class="btn" data-copy>Copy</button>
+          </div>
+        </div>
+        <pre class="code bib-out" data-output></pre>
+        <p class="hint">Your file stays in your browser; only the options are remembered.</p>
+      </div>
+    </div>
+  </section>
+</div>

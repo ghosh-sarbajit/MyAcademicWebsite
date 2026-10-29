@@ -20,10 +20,11 @@
 
 <main>
   {{- $notes := dict
-      "Literature" `Both apps run in your browser: nothing is installed and nothing is sent to this website.
-          They are the web versions of <code>scrape.py</code> and <code>citationDownload.py</code> from my bibliography scripts.`
+      "Literature" `These apps run in your browser: nothing is installed and nothing is sent to this website.
+          The first two are the web versions of <code>scrape.py</code> and <code>citationDownload.py</code> from my bibliography scripts.`
+      "Privacy" `Worked out in your browser from the standard composition theorems; see the method notes on the page.`
       "Conferences" `The dates come from community-maintained lists: <a href="https://sec-deadlines.github.io">Security and Privacy Deadlines</a>, <a href="https://ccfddl.com">CCF Deadlines</a> and Hugging Face's <a href="https://huggingface.co/spaces/huggingface/ai-deadlines">AI Deadlines</a>.` -}}
-  {{ range $g := slice "Literature" "Conferences" }}
+  {{ range $g := slice "Literature" "Privacy" "Conferences" }}
   {{- $pages := where $.Pages.ByWeight "Params.group" $g }}
   {{- with $pages }}
   <section class="block" id="{{ lower $g }}">
