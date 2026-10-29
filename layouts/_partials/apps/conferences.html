@@ -8,11 +8,14 @@
         <form class="toolbar" data-tools>
           <label>CORE rank <select name="group"></select></label>
           <label>Show <select name="show">
-            <option value="upcoming">Upcoming</option><option value="past">Past</option><option value="all">Upcoming and past</option></select></label>
+            <option value="upcoming">Upcoming</option><option value="past">Past</option><option value="all">Upcoming and past</option>
+            <option value="starred">Starred ★</option></select></label>
           <label>Sort by <select name="sort">
             <option value="deadline">Next deadline</option><option value="date">Conference date</option></select></label>
         </form>
         <p class="meta small" data-meta aria-live="polite">Reading the community list…</p>
+        <p class="row cal-row"><button type="button" class="btn" data-ics-all hidden>Add all shown deadlines to your calendar (.ics)</button>
+          <span class="hint">Star (☆) the conferences you follow to see only those under Show → Starred.</span></p>
         <div class="confs" data-list></div>
       </div>
     </div>

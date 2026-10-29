@@ -425,9 +425,62 @@
     return want;
   }
 
+  // ------------------------------------------------------------------ calendar (.ics)
+
+  const icsTime = ms => new Date(ms).toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+  const icsText = s => String(s).replace(/\\/g, '\\\\').replace(/\r?\n/g, '\\n').replace(/[,;]/g, '\\$&');
+  const utf8 = new TextEncoder();
+
+  // lines longer than 75 bytes go on as continuation lines that start with a space (RFC 5545)
+  function fold(line) {
+    const out = [];
+    let cur = '', n = 0;
+    for (const ch of line) {
+      const b = utf8.encode(ch).length;
+      if (n + b > (out.length ? 74 : 75)) { out.push(cur); cur = ''; n = 0; }
+      cur += ch; n += b;
+    }
+    out.push(cur);
+    return out.join('\r\n ');
+  }
+
+  // events [{uid, start (ms), summary, description, url}] -> an iCalendar file; each event
+  // lasts an hour from the deadline, does not mark you busy and reminds you a day before
+  function ics(events, stamp = Date.now()) {
+    const lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//ghosh-sarbajit.github.io//Conference deadlines//EN',
+      'CALSCALE:GREGORIAN', 'METHOD:PUBLISH'];
+    for (const e of events) {
+      lines.push('BEGIN:VEVENT', `UID:${e.uid}`, `DTSTAMP:${icsTime(stamp)}`,
+        `DTSTART:${icsTime(e.start)}`, `DTEND:${icsTime(e.start + 36e5)}`, `SUMMARY:${icsText(e.summary)}`);
+      if (e.description) lines.push(`DESCRIPTION:${icsText(e.description)}`);
+      if (e.url) lines.push(`URL:${e.url}`);
+      lines.push('TRANSP:TRANSPARENT', 'BEGIN:VALARM', 'ACTION:DISPLAY', 'TRIGGER:-P1D',
+        `DESCRIPTION:${icsText(e.summary)}`, 'END:VALARM', 'END:VEVENT');
+    }
+    lines.push('END:VCALENDAR');
+    return lines.map(fold).join('\r\n') + '\r\n';
+  }
+
+  // the deadlines of edition x still to come, as calendar events. The UID numbers each
+  // deadline instead of using its date, so importing again after a date moves updates it.
+  function deadlineEvents(c, x, now) {
+    if (!x) return [];
+    const t = +now, slug = c.short.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    const place = x.record.place ? ', ' + x.record.place : '';
+    const one = kind => (d, i) => ({
+      uid: `${slug}-${x.year}-${kind}-${i + 1}@ghosh-sarbajit.github.io`,
+      start: d.ms,
+      summary: `${c.short} ${x.year} ${kind} deadline${d.label ? ' (' + d.label + ')' : ''}`,
+      description: [c.full, x.when + place, x.record.link].filter(Boolean).join('\n'),
+      url: x.record.link || '',
+    });
+    return [...x.abstracts.map(one('abstract')), ...x.papers.map(one('paper'))]
+      .filter(e => e.start > t).sort((a, b) => a.start - b.start);
+  }
+
   const core = {
     SOURCES, LISTS, parseYaml, stripComment, conferenceDays, parseZone, zoneLabel, deadline, timeLeft,
-    abstractsFromNote, edition, conferences, filesFor, dblpKey, coreSearch,
+    abstractsFromNote, edition, conferences, filesFor, dblpKey, coreSearch, fold, ics, deadlineEvents,
   };
   if (typeof module !== 'undefined' && module.exports) { module.exports = core; return; }
 
@@ -440,7 +493,10 @@
   const esc = A.escapeHtml;
   const box = $('[data-list]', app), meta = $('[data-meta]', app), tools = $('[data-tools]', app);
   const SAVED_KEY = 'apps.conferences.' + app.dataset.list;
-  const state = { files: null, loaded: null, savedAt: null, reached: 0, changed: '' };
+  const STAR_KEY = 'apps.conferences.starred'; // short names, shared by both lists
+  const starred = new Set(A.load(STAR_KEY, []) || []);
+  const calAll = $('[data-ics-all]', app);
+  const state = { files: null, loaded: null, savedAt: null, reached: 0, changed: '', shown: [] };
 
   tools.group.innerHTML = LIST.groups.map(([v, label]) => `<option value="${esc(v)}">${esc(label)}</option>`).join('');
 
@@ -481,8 +537,9 @@
     return `<div class="count" title="Time left until the next deadline">${x.nextAbstract ? one(x.nextAbstract, 'abstract') : ''}${one(x.next, 'submit')}</div>`;
   }
 
-  function links(c, x) {
+  function links(c, x, cal) {
     const out = [];
+    if (cal) out.push(`<button type="button" data-ics="${esc(c.short)}" title="Download the deadlines still to come as a calendar file">Add deadlines to calendar (.ics)</button>`);
     if (x && x.record.link) out.push(`<a href="${esc(x.record.link)}" target="_blank" rel="noopener">Conference website</a>`);
     out.push(`<a href="${dblp(c)}" target="_blank" rel="noopener">DBLP</a>`);
     if (c.from) out.push(`<a href="${esc(SOURCES[c.from].edit(c.key))}" target="_blank" rel="noopener">Suggest a correction</a>`);
@@ -492,7 +549,10 @@
   function heading(c, x) {
     const name = x ? `${esc(c.short)} ${x.year}` : esc(c.short);
     const area = LIST.labels ? ` <span class="area">${esc(LIST.labels[c.group])}</span>` : '';
-    return `<h3 class="pub-title">${x && x.record.link ? `<a href="${esc(x.record.link)}" target="_blank" rel="noopener">${name}</a>` : name}
+    const on = starred.has(c.short);
+    const star = `<button type="button" class="star${on ? ' on' : ''}" data-star="${esc(c.short)}" aria-pressed="${on}"
+      title="${on ? 'Remove from' : 'Add to'} your starred conferences" aria-label="Star ${esc(c.short)}">${on ? '★' : '☆'}</button>`;
+    return `<h3 class="pub-title">${star}${x && x.record.link ? `<a href="${esc(x.record.link)}" target="_blank" rel="noopener">${name}</a>` : name}
       ${rankLink(c)}${area}</h3>
       <p class="conf-full">${esc(c.full)}</p>`;
   }
@@ -518,7 +578,7 @@
         ${deadlines ? `<p class="label">Submission deadlines</p>${deadlines}` : ''}
         ${r.comment ? `<p class="hint">${esc(r.comment)}</p>` : ''}
         ${later.length ? `<p class="hint">Also listed: ${later.join('; ')}.</p>` : ''}
-        ${links(c, x)}
+        ${links(c, x, x.status !== 'over' && deadlineEvents(c, x, now).length > 0)}
       </div>
       ${countdown(x, now)}
     </article>`;
@@ -544,7 +604,8 @@
   function render() {
     const now = new Date(), t = now.getTime();
     const group = tools.group.value, show = tools.show.value, sort = tools.sort.value;
-    const all = conferences(LIST, state.files, now).filter(c => group === 'all' || c.group === group);
+    const all = conferences(LIST, state.files, now).filter(c => (group === 'all' || c.group === group)
+      && (show !== 'starred' || starred.has(c.short)));
     tools.sort.disabled = show === 'past';
 
     const soonest = c => c.current.next ? Math.min(...[c.current.nextAbstract, c.current.next].filter(d => d && d.ms > t).map(d => d.ms)) : Infinity;
@@ -556,19 +617,23 @@
     const waiting = all.filter(c => !c.current);
 
     let html = '';
-    if (show !== 'past') {
+    if (show === 'starred' && !all.length) {
+      html += '<p class="empty">No starred conferences here yet: click ☆ next to a name to keep it in this view.</p>';
+    } else if (show !== 'past') {
       html += coming.length ? coming.map(c => card(c, c.current, t)).join('') : '<p class="empty">No upcoming editions are listed.</p>';
     }
-    if (show === 'upcoming' && waiting.length) {
+    if ((show === 'upcoming' || show === 'starred') && waiting.length) {
       html += `<p class="label group-head">Waiting for the next edition</p>${waiting.map(waitingCard).join('')}`;
     }
-    if (show !== 'upcoming') {
+    if (show === 'past' || show === 'all') {
       if (show === 'all') html += '<p class="label group-head">Past editions</p>';
       html += past.length ? past.map(c => card(c, c.past, t)).join('') : '<p class="empty">No past editions are listed.</p>';
       const none = all.filter(c => !c.found);
       if (none.length) html += `<p class="label group-head">Not in the lists</p>${none.map(waitingCard).join('')}`;
     }
     box.innerHTML = html;
+    state.shown = show === 'past' ? [] : coming;
+    calAll.hidden = !state.shown.some(c => deadlineEvents(c, c.current, t).length);
 
     const open = coming.filter(c => c.current.next).length;
     meta.innerHTML = [
@@ -632,6 +697,26 @@
     if (reached) lastChanged();
   }
 
+  function saveCalendar(list, name) {
+    const now = Date.now(), events = list.flatMap(c => deadlineEvents(c, c.current, now));
+    if (events.length) A.download(name, ics(events, now), 'text/calendar');
+  }
+
+  box.addEventListener('click', e => {
+    const star = e.target.closest('[data-star]'), cal = e.target.closest('[data-ics]');
+    if (star) {
+      const name = star.dataset.star;
+      if (starred.has(name)) starred.delete(name); else starred.add(name);
+      A.save(STAR_KEY, [...starred]);
+      render();
+      const again = [...box.querySelectorAll('[data-star]')].find(b => b.dataset.star === name);
+      if (again) again.focus();
+    } else if (cal) {
+      const c = state.shown.find(x => x.short === cal.dataset.ics);
+      if (c) saveCalendar([c], `${c.short.replace(/[^A-Za-z0-9]+/g, '-')}-${c.current.year}-deadlines.ics`);
+    }
+  });
+  calAll.addEventListener('click', () => saveCalendar(state.shown, `${app.dataset.list}-conference-deadlines.ics`));
   tools.addEventListener('input', () => { if (state.files) render(); });
   tools.addEventListener('submit', e => e.preventDefault());
   start();

@@ -226,6 +226,10 @@ pre.bibtex{
 .rank{color:var(--accent-2);background:var(--accent-soft);padding:2px 8px;border-radius:4px;font-weight:500;white-space:nowrap;}
 a.rank{text-decoration:none;vertical-align:middle;}
 a.rank:hover,a.rank:focus-visible{color:var(--paper);background:var(--accent-2);}
+.star{font-size:1.05rem;line-height:1;color:var(--muted);background:none;border:0;padding:0 2px;cursor:pointer;align-self:center;}
+.star:hover,.star.on{color:var(--accent);}
+.star:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px;}
+.cal-row{margin:0 0 10px;}
 .label{color:var(--muted);margin:10px 0 4px!important;}
 ul.deadlines{list-style:none;margin:0 0 8px;padding:0;font-size:.92rem;}
 ul.deadlines li{padding:3px 0 3px 12px;border-left:2px solid var(--rule);}
