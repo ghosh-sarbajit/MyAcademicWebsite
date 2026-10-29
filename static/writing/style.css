@@ -396,6 +396,9 @@ aside.try p{margin:8px 0 0;font-size:1rem;}
 .endmatter h2{margin-top:0;}
 .endmatter ul{padding-left:20px;color:var(--ink-2);font-size:.94rem;}
 .endmatter li{margin-bottom:8px;}
+.comments{margin-top:54px;padding-top:26px;border-top:1px solid var(--rule);}
+.comments h2{margin-top:0;}
+.comments-note{font-size:.88rem;color:var(--muted);}
 .about{margin-top:30px;font-size:.95rem;color:var(--muted);}
 .about a{color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent-soft);}
 

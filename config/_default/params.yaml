@@ -185,14 +185,19 @@ hugoblox:
   # COMMENTS
   # User comments system
   # ────────────────────────────────────────────────────────────────────────────
+  # Writing posts show giscus comments (stored as GitHub Discussions in the repo below) once
+  # category_id is filled in: turn on Discussions in that repo, install github.com/apps/giscus
+  # on it, then copy data-category-id for the Announcements category from giscus.app.
   comments:
-    enable: false
-    provider: ""                        # giscus | disqus
+    enable: true
+    provider: giscus                    # giscus | disqus
     giscus:
-      repo: ""
-      repo_id: ""
-      category: ""
+      repo: "ghosh-sarbajit/ghosh-sarbajit.github.io_comments"
+      repo_id: "R_kgDOVcQ1Ww"
+      category: "Announcements"
       category_id: ""
+      mapping: pathname
+      theme: transparent_dark           # the Writing posts use the dark terminal theme
     disqus:
       shortname: ""
 
