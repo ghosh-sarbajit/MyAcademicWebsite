@@ -25,7 +25,6 @@
       "name" $me.name.display
       "givenName" $me.name.given
       "familyName" $me.name.family
-      "alternateName" (slice $me.name.alternate $me.name.below.text)
       "url" site.Home.Permalink
       "jobTitle" $me.role
       "description" (replace (trim $me.bio "\n ") "\n" " ")
@@ -34,6 +33,11 @@
       "knowsAbout" $me.interests
       "sameAs" $same_as
   -}}
+  {{- /* Other spellings of the name (e.g. in Bengali), from name.alternate in data/authors/me.yaml
+         (a string or a list); left out when there are none. */ -}}
+  {{- $alt := slice -}}
+  {{- with $me.name.alternate }}{{ if reflect.IsSlice . }}{{ $alt = . }}{{ else }}{{ $alt = slice . }}{{ end }}{{ end -}}
+  {{- with $alt }}{{ $person = merge $person (dict "alternateName" .) }}{{ end -}}
   {{- with resources.Get "media/sharing.jpg" }}{{ $person = merge $person (dict "image" .Permalink) }}{{ end }}
   <script type="application/ld+json">{{ $person | jsonify | safeJS }}</script>
 {{- end -}}
