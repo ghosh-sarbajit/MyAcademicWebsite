@@ -5,13 +5,6 @@ name:
   display: Sarbajit Ghosh
   given: Sarbajit
   family: Ghosh
-  alternate: 'সর্বজিৎ ঘোষ'
-  # Shown as a small annotation above the name on the homepage
-  pronunciation: 'সর্বজিৎ ঘোষ'
-  # Shown below the name on the homepage (local addition, see layouts/_partials/hbx/blocks/resume-biography-3/block.html)
-  below:
-    text: 'ஸர்பஜித் கோஷ'
-    lang: ta
   pronouns: He/Him
 status:
   icon: "📚"
