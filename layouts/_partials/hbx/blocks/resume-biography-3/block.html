@@ -2,7 +2,9 @@
 {{/* LOCAL OVERRIDE of the HugoBlox block (kit/modules/blox/blox/resume-biography-3/block.html).
      Local changes (re-apply them after a theme upgrade):
      - an optional name line below the main name, from `name.below` in data/authors/<username>.yaml (the Tamil name);
-     - the "Download CV" button sits in the left column under the social icons, not in the right column;
+     - less padding above the block, so the content starts right under the navbar;
+     - the CV button is a round "CV" icon at the end of the social icons, and the interests sit under them,
+       both in the left column instead of the right;
      - education dates on one line ("2016–2018"), and an optional `honour` line per education entry. */}}
 {{/* Documentation: https://hugoblox.com/blocks/ */}}
 {{/* License: https://github.com/HugoBlox/kit/blob/main/LICENSE.md */}}
@@ -87,7 +89,7 @@
   {{ end }}
 {{ end }}
 
-<div class="resume-biography py-8 px-4 sm:py-12 md:py-16 lg:py-24 xl:py-32 relative overflow-hidden">
+<div class="resume-biography pt-6 pb-10 px-4 md:pt-8 lg:pb-16 relative overflow-hidden">
   {{/* Add subtle top gradient for navbar transition */}}
   <div class="max-w-7xl mx-auto">
     <div class="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8 items-start">
@@ -293,6 +295,27 @@
           {{ end }}
         </div>
 
+        {{/* CV Download Button (local change: a round "CV" button at the end of the social icons, not a big button in the right column) */}}
+        {{ $cv_text := "" }}
+        {{ $cv_link := "" }}
+        {{ $cv_target := "" }}
+        {{ $button_raw := index $content "button" }}
+        {{ if and $button_raw (reflect.IsMap $button_raw) }}
+          {{ with index $button_raw "text" }}{{ $cv_text = strings.TrimSpace (printf "%v" .) }}{{ end }}
+          {{ with index $button_raw "url" }}{{ $cv_link = strings.TrimSpace (printf "%v" .) }}{{ end }}
+          {{ if and $cv_text $cv_link }}
+            {{ $scheme := (urls.Parse $cv_link).Scheme }}
+            {{ if not $scheme }}
+              {{ if not (hasPrefix $cv_link "#") }}{{ $cv_link = $cv_link | relLangURL }}{{ end }}
+              {{ if eq (path.Ext $cv_link) ".pdf" }}{{ $cv_target = "target=\"_blank\" rel=\"noopener\"" }}{{ end }}
+            {{ else if in (slice "http" "https") $scheme }}
+              {{ $cv_target = "target=\"_blank\" rel=\"noopener\"" }}
+            {{ end }}
+          {{ else }}
+            {{ $cv_link = "" }}
+          {{ end }}
+        {{ end }}
+
         {{/* Social Icons */}}
         {{ $links_raw := $profile.links }}
         {{ $links := slice }}
@@ -301,7 +324,7 @@
         {{ else if eq (printf "%T" $links_raw) "string" }}
           {{ $links = slice $links_raw }}
         {{ end }}
-        {{ if gt (len $links) 0 }}
+        {{ if or (gt (len $links) 0) $cv_link }}
         <div class="flex flex-wrap justify-center gap-4">
           {{ range $links }}
           {{ $linkUrl := "" }}
@@ -345,38 +368,53 @@
             </a>
           {{ end }}
           {{ end }}
+          {{ with $cv_link }}
+            <a href="{{ . | safeURL }}" {{ $cv_target | safeHTMLAttr }} class="cv-button w-12 h-12 flex items-center justify-center rounded-full
+                      bg-gradient-to-br from-primary-600 to-secondary-600 text-white font-bold text-sm tracking-wide
+                      shadow-md hover:shadow-xl hover:scale-110 hover:-translate-y-1 transition-all duration-300"
+               title="Download CV (PDF)" aria-label="Download CV (PDF)">{{ $cv_text }}</a>
+          {{ end }}
         </div>
         {{ end }}
 
-        {{/* CV Download Button (local change: moved here from the right column, under the social icons) */}}
-        {{ $button_raw := index $content "button" }}
-        {{ if and $button_raw (reflect.IsMap $button_raw) }}
-          {{ $button_text := "" }}
-          {{ $button_url := "" }}
-          {{ with index $button_raw "text" }}{{ $button_text = printf "%v" . }}{{ end }}
-          {{ with index $button_raw "url" }}{{ $button_url = printf "%v" . }}{{ end }}
-          {{ $button_text = strings.TrimSpace $button_text }}
-          {{ $button_url = strings.TrimSpace $button_url }}
-          {{ if and $button_text $button_url }}
-            {{ $button_link := $button_url }}
-            {{ $scheme := (urls.Parse $button_link).Scheme }}
-            {{ $target := "" }}
-            {{ if not $scheme }}
-              {{ if not (hasPrefix $button_link "#") }}
-                {{ $button_link = $button_link | relLangURL }}
-              {{ end }}
-              {{ if eq (path.Ext $button_link) ".pdf" }}{{ $target = "target=\"_blank\" rel=\"noopener\"" }}{{ end }}
-            {{ else if in (slice "http" "https") $scheme }}
-              {{ $target = "target=\"_blank\" rel=\"noopener\"" }}
-            {{ end }}
-            <div class="cv-button">
-              <a href="{{ $button_link | safeURL }}" {{ $target | safeHTMLAttr }}
-                 class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-primary-600 to-secondary-600 hover:from-primary-700 hover:to-secondary-700 text-white font-bold text-base rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300">
-                {{ partial "functions/get_icon" (dict "name" "document-arrow-down" "attributes" "class='w-5 h-5 mr-3'") }}
-                {{ $button_text }}
-              </a>
+        {{/* Interests Section (local change: in the left column, under the contact icons) */}}
+        {{ $interests_raw := $profile.interests }}
+        {{ $interests := slice }}
+        {{ if reflect.IsSlice $interests_raw }}
+          {{ $interests = $interests_raw }}
+        {{ else if eq (printf "%T" $interests_raw) "string" }}
+          {{ $interests = slice $interests_raw }}
+        {{ end }}
+        {{ if gt (len $interests) 0 }}
+        <div class="w-full">
+          <div class="flex items-center justify-center gap-3 mb-4">
+            <div class="flex-shrink-0 w-10 h-10 bg-primary-100 dark:bg-primary-900/50 rounded-full flex items-center justify-center">
+              {{ partial "functions/get_icon" (dict "name" "sparkles" "attributes" "class='w-5 h-5 text-primary-600 dark:text-primary-400'") }}
             </div>
-          {{ end }}
+            {{ $interests_heading := i18n "interests" }}
+            {{ $interests_heading_raw := index $headings "interests" }}
+            {{ if eq (printf "%T" $interests_heading_raw) "string" }}
+              {{ $interests_heading_raw = strings.TrimSpace $interests_heading_raw }}
+              {{ if ne $interests_heading_raw "" }}
+                {{ $interests_heading = $interests_heading_raw }}
+              {{ end }}
+            {{ end }}
+            <h2 class="text-lg font-bold text-gray-900 dark:text-white tracking-tight">{{ $interests_heading | markdownify }}</h2>
+          </div>
+          <div class="flex flex-wrap justify-center gap-2">
+            {{ range $interests }}
+            {{ $interest := strings.TrimSpace (printf "%v" .) }}
+            {{ if $interest }}
+            <span class="inline-block bg-primary-50 dark:bg-gray-800 text-primary-800 dark:text-primary-200 text-sm font-medium px-3 py-1.5 rounded-full border border-primary-200/50 dark:border-primary-800/50
+                           hover:bg-primary-100 
+                           dark:hover:bg-primary-500 dark:hover:text-gray-900 dark:hover:border-primary-500
+                           transition-all duration-200 cursor-default">
+              {{ $interest | markdownify | emojify }}
+            </span>
+            {{ end }}
+            {{ end }}
+          </div>
+        </div>
         {{ end }}
       </div>
 
@@ -496,45 +534,6 @@
         </div>
         {{ end }}
 
-        {{/* Interests Section */}}
-        {{ $interests_raw := $profile.interests }}
-        {{ $interests := slice }}
-        {{ if reflect.IsSlice $interests_raw }}
-          {{ $interests = $interests_raw }}
-        {{ else if eq (printf "%T" $interests_raw) "string" }}
-          {{ $interests = slice $interests_raw }}
-        {{ end }}
-        {{ if gt (len $interests) 0 }}
-        <div>
-          <div class="flex items-center gap-4 mb-8">
-            <div class="flex-shrink-0 w-12 h-12 bg-primary-100 dark:bg-primary-900/50 rounded-full flex items-center justify-center">
-              {{ partial "functions/get_icon" (dict "name" "sparkles" "attributes" "class='w-6 h-6 text-primary-600 dark:text-primary-400'") }}
-            </div>
-            {{ $interests_heading := i18n "interests" }}
-            {{ $interests_heading_raw := index $headings "interests" }}
-            {{ if eq (printf "%T" $interests_heading_raw) "string" }}
-              {{ $interests_heading_raw = strings.TrimSpace $interests_heading_raw }}
-              {{ if ne $interests_heading_raw "" }}
-                {{ $interests_heading = $interests_heading_raw }}
-              {{ end }}
-            {{ end }}
-            <h3 class="text-xl font-bold text-gray-900 dark:text-white tracking-tight">{{ $interests_heading | markdownify }}</h3>
-          </div>
-          <div class="flex flex-wrap gap-3">
-            {{ range $interests }}
-            {{ $interest := strings.TrimSpace (printf "%v" .) }}
-            {{ if $interest }}
-            <span class="inline-block bg-primary-50 dark:bg-gray-800 text-primary-800 dark:text-primary-200 text-base font-medium px-4 py-2 rounded-full border border-primary-200/50 dark:border-primary-800/50
-                           hover:bg-primary-100 
-                           dark:hover:bg-primary-500 dark:hover:text-gray-900 dark:hover:border-primary-500
-                           transition-all duration-200 cursor-default">
-              {{ $interest | markdownify | emojify }}
-            </span>
-            {{ end }}
-            {{ end }}
-          </div>
-        </div>
-        {{ end }}
       </div>
     </div>
   </div>

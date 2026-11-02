@@ -38,13 +38,34 @@
       d.querySelector('.nav-drop-btn').setAttribute('aria-expanded', 'false');
     });
   }
+  function set(d, open) {
+    d.classList.toggle('open', open);
+    d.querySelector('.nav-drop-btn').setAttribute('aria-expanded', String(open));
+  }
   drops.forEach(function (d) {
     var btn = d.querySelector('.nav-drop-btn');
+    var timer = null, hovered = false;
     btn.addEventListener('click', function () {
+      // a click right after the mouse opened it should not close it again
+      if (hovered) { hovered = false; return; }
       var open = !d.classList.contains('open');
       close(d);
-      d.classList.toggle('open', open);
-      btn.setAttribute('aria-expanded', String(open));
+      set(d, open);
+    });
+    // with a mouse, open when the pointer comes near (the item has padding around it) and close
+    // shortly after it leaves both the button and the menu
+    d.addEventListener('pointerenter', function (e) {
+      if (e.pointerType !== 'mouse') return;
+      clearTimeout(timer);
+      if (!d.classList.contains('open')) {
+        close(d); set(d, true); hovered = true;
+        setTimeout(function () { hovered = false; }, 400);
+      }
+    });
+    d.addEventListener('pointerleave', function (e) {
+      if (e.pointerType !== 'mouse') return;
+      clearTimeout(timer);
+      timer = setTimeout(function () { set(d, false); }, 250);
     });
     d.addEventListener('focusout', function (e) { if (!d.contains(e.relatedTarget)) close(); });
   });

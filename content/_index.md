@@ -19,15 +19,20 @@ sections:
       username: me
       text: ''
       # Show a call-to-action button under your biography? (optional)
+      # Shown as a round button at the end of the contact icons
       button:
-        text: Download CV
+        text: CV
         url: uploads/resume.pdf
         new_tab: true
       headings:
         about: ''
         education: ''
-        interests: ''
+        interests: 'Research Interests'
     design:
+      # No extra section padding: the block has its own small top margin, so the
+      # profile starts right under the navbar (the page default is 6rem)
+      spacing:
+        padding: ['0', '0', '0', '0']
       # Use the new Gradient Mesh which automatically adapts to the selected theme colors
       background:
         gradient_mesh:
