@@ -124,14 +124,16 @@ jobs:
         REPO=$(yq '.hugoblox.comments.giscus.repo // ""' config/_default/params.yaml)
         CAT=$(yq '.hugoblox.comments.giscus.category // ""' config/_default/params.yaml)
         if [ -z "$REPO" ] || [ -z "$CAT" ]; then exit 0; fi
-        ID=$(gh api graphql -f owner="${REPO%%/*}" -f name="${REPO#*/}" -f query='
+        RAW=$(gh api graphql -f owner="${REPO%%/*}" -f name="${REPO#*/}" -f query='
           query($owner: String!, $name: String!) {
-            repository(owner: $owner, name: $name) { discussionCategories(first: 50) { nodes { id name } } }
-          }' --jq ".data.repository.discussionCategories.nodes[] | select(.name == \"$CAT\") | .id" 2>/dev/null || true)
+            repository(owner: $owner, name: $name) { hasDiscussionsEnabled discussionCategories(first: 50) { nodes { id name } } }
+          }' 2>&1 || true)
+        ID=$(printf '%s' "$RAW" | jq -r --arg c "$CAT" '.data.repository.discussionCategories.nodes[]? | select(.name == $c) | .id' 2>/dev/null || true)
         if [ -n "$ID" ]; then
           echo "giscus category '$CAT' in $REPO has id: $ID"
           echo "HUGOxPARAMSxHUGOBLOXxCOMMENTSxGISCUSxCATEGORY_ID=$ID" >> "$GITHUB_ENV"
         else
+          echo "GitHub replied: $RAW"
           echo "::warning::No discussion category '$CAT' found in $REPO (are Discussions on?). Comments stay hidden."
         fi
 
