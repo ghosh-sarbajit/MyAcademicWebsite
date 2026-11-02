@@ -25,6 +25,15 @@ affiliations:
   - name: Indian Institute of Technology, Kanpur
     url: https://www.iitk.ac.in/
 
+# One line under the name on the homepage, in place of `role` and `affiliations`
+# (local addition, see layouts/_partials/hbx/blocks/resume-biography-3/block.html)
+headline:
+  - text: PhD Scholar
+  - text: CSE Department
+    url: https://cse.iitk.ac.in/pages/PhD2021_Person.html
+  - text: IIT Kanpur
+    url: https://www.iitk.ac.in/
+
 links:
   - icon: at-symbol
     url: mailto:sarbajitg@cse.iitk.ac.in

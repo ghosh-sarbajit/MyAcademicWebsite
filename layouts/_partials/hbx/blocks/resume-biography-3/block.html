@@ -5,6 +5,7 @@
      - less padding above the block, so the content starts right under the navbar;
      - the CV button is a round "CV" icon at the end of the social icons, and the interests sit under them,
        both in the left column instead of the right;
+     - pronouns next to the name, and an optional one-line `headline` instead of the role and affiliation lines;
      - education dates on one line ("2016–2018"), and an optional `honour` line per education entry. */}}
 {{/* Documentation: https://hugoblox.com/blocks/ */}}
 {{/* License: https://github.com/HugoBlox/kit/blob/main/LICENSE.md */}}
@@ -218,26 +219,35 @@
           {{/* Name with optional ruby pronunciation */}}
           {{ if and $profile.title $name_pronunciation }}
             <h1 class="{{ $name_class }} font-black text-gray-900 dark:text-white leading-tight">
-              <ruby class="hb-ruby-name">{{ $profile.title }}<rt>{{ $name_pronunciation }}</rt></ruby>
+              <ruby class="hb-ruby-name">{{ $profile.title }}<rt>{{ $name_pronunciation }}</rt></ruby> {{ with $profile.pronouns }}{{ if eq (printf "%T" .) "string" }}<span class="hb-pronouns align-middle font-medium text-gray-500 dark:text-gray-400 whitespace-nowrap" style="font-size:0.32em">({{ . }})</span>{{ end }}{{ end }}
               {{ with $name_below }}<span class="hb-name-below block mt-1 font-medium text-gray-500 dark:text-gray-400" style="font-size:0.45em" {{ with $name_below_lang }}lang="{{ . }}"{{ end }}>{{ . }}</span>{{ end }}
             </h1>
           {{ else }}
             <h1 class="{{ $name_class }} font-black text-gray-900 dark:text-white leading-tight">
-              {{ $profile.title }}
+              {{ $profile.title }} {{ with $profile.pronouns }}{{ if eq (printf "%T" .) "string" }}<span class="hb-pronouns align-middle font-medium text-gray-500 dark:text-gray-400 whitespace-nowrap" style="font-size:0.32em">({{ . }})</span>{{ end }}{{ end }}
               {{ with $name_below }}<span class="hb-name-below block mt-1 font-medium text-gray-500 dark:text-gray-400" style="font-size:0.45em" {{ with $name_below_lang }}lang="{{ . }}"{{ end }}>{{ . }}</span>{{ end }}
             </h1>
           {{ end }}
           
-          {{ $pronouns := "" }}
-          {{ with $profile.pronouns }}
-            {{ if eq (printf "%T" .) "string" }}
-              {{ $pronouns = . }}
-            {{ end }}
-          {{ end }}
-          {{ with $pronouns }}
-            <p class="text-lg text-gray-600 dark:text-gray-400">({{ . }})</p>
-          {{ end }}
-          
+          {{/* local change: the pronouns are shown next to the name (above), not on their own line */}}
+
+          {{/* local addition: `headline` in data/authors/<username>.yaml gives one line such as
+               "PhD Scholar, CSE Department, IIT Kanpur", each part optionally a link; it replaces
+               the separate role and affiliation lines. Without it, the theme's two lines are shown. */}}
+          {{ $headline := slice }}
+          {{ with index site.Data.authors $author }}{{ with .headline }}{{ if reflect.IsSlice . }}{{ $headline = . }}{{ end }}{{ end }}{{ end }}
+          {{ if $headline }}
+            <p class="hb-headline text-lg font-semibold text-gray-800 dark:text-gray-200">
+              {{- range $i, $part := $headline -}}
+                {{- if $i }}, {{ end -}}
+                {{- if reflect.IsMap $part -}}
+                  {{- with $part.url -}}
+                    <a href="{{ . | safeURL }}" target="_blank" rel="noopener" class="text-primary-600 dark:text-primary-400 hover:underline">{{ $part.text }}</a>
+                  {{- else -}}{{ $part.text }}{{- end -}}
+                {{- else -}}{{ $part }}{{- end -}}
+              {{- end -}}
+            </p>
+          {{ else }}
           {{ $role_text := "" }}
           {{ with $profile.role }}
             {{ if eq (printf "%T" .) "string" }}
@@ -292,6 +302,7 @@
                 {{ end }}
               </p>
             {{ end }}
+          {{ end }}
           {{ end }}
         </div>
 
