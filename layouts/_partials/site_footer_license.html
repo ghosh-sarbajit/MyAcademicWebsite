@@ -1,0 +1,58 @@
+{{/* Display copyright license. */}}
+{{/* LOCAL OVERRIDE of the HugoBlox partial (kit/modules/blox/layouts/_partials/site_footer_license.html).
+     Only change: the row of four Creative Commons badges is left out; the notice below already
+     links to the licence ("This work is licensed under CC BY NC ND 4.0"). Re-check after a theme upgrade. */}}
+
+{{ $branding := partialCached "functions/get_branding" . "branding" }}
+{{ $page_copyright := .Params.copyright | default dict }}
+{{ $site_copyright := site.Params.hugoblox.copyright | default dict }}
+
+{{ $copyright_license := $page_copyright.license | default $site_copyright.license | default dict }}
+{{ $notice := $page_copyright.notice | default $site_copyright.notice }}
+
+{{ $license_type := $copyright_license.type | default "cc" }}
+
+{{ $license_label := "" }}
+{{ $license_url := "" }}
+{{ $show_cc_icons := false }}
+
+{{ $allow_commercial := $copyright_license.allow_commercial | default false }}
+{{ $allow_derivatives := $copyright_license.allow_derivatives | default false }}
+{{ $share_alike := $copyright_license.share_alike | default true }}
+
+{{ if eq $license_type "cc" }}
+
+  {{ $cc_code := "by" }}
+  {{ if not $allow_commercial }}
+    {{ $cc_code = printf "%s-nc" $cc_code }}
+  {{end}}
+  {{ if and $allow_derivatives $share_alike }}
+    {{ $cc_code = printf "%s-sa" $cc_code }}
+  {{ else if not $allow_derivatives }}
+    {{ $cc_code = printf "%s-nd" $cc_code }}
+  {{end}}
+
+  {{ $license_url = printf "https://creativecommons.org/licenses/%s/4.0" ($cc_code | urlize) }}
+  {{ $license_label = printf "<a href=\"%s\" rel=\"noopener noreferrer\" target=\"_blank\">CC %s 4.0</a>" $license_url (replace $cc_code "-" " " | upper) }}
+  {{ $show_cc_icons = true }}
+
+{{ else if eq $license_type "custom" }}
+
+  {{ $custom_label := $copyright_license.label | default $copyright_license.text | default "" }}
+  {{ $custom_url := $copyright_license.url | default "" }}
+  {{ if and $custom_label $custom_url }}
+    {{ $license_label = printf "<a href=\"%s\" rel=\"noopener noreferrer\" target=\"_blank\">%s</a>" $custom_url $custom_label }}
+  {{ else }}
+    {{ $license_label = $custom_label }}
+  {{ end }}
+
+{{ end }}
+
+{{ with $notice }}
+<p class="powered-by text-center">
+  {{ $processed := replace . "{year}" now.Year }}
+  {{ $processed = replace $processed "{name}" $branding.organization }}
+  {{ $processed = replace $processed "{license}" $license_label }}
+  {{ $processed | markdownify }}
+</p>
+{{ end }}
