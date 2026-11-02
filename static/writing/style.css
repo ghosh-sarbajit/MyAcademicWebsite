@@ -128,20 +128,45 @@ nav{
    more reliably than the monospace one */
 nav .nav-name{font-family:var(--sans);}
 .nav-links{
-  display:flex;gap:6px;list-style:none;margin:0;padding:0;
-  overflow-x:auto;scrollbar-width:none;
+  display:flex;flex-wrap:wrap;gap:6px;list-style:none;margin:0;padding:0;
 }
-.nav-links::-webkit-scrollbar{display:none;}
 .nav-links a,
+.nav-drop-btn,
 .nav-back{
   font-family:var(--mono);font-size:.74rem;letter-spacing:.02em;
   text-decoration:none;color:var(--muted);
   padding:6px 9px;border-radius:6px;white-space:nowrap;
   transition:color .2s,background .2s;
 }
-.nav-links a:hover{color:var(--ink);}
+.nav-links a:hover,
+.nav-drop-btn:hover{color:var(--ink);}
 .nav-links a.active,
+.nav-drop-btn.active,
 .nav-back:hover{color:var(--accent);background:var(--accent-soft);}
+
+/* dropdown for a menu entry with children (Apps) */
+.nav-drop{position:relative;}
+.nav-drop-btn{
+  display:inline-flex;align-items:center;gap:5px;
+  background:none;border:0;cursor:pointer;line-height:inherit;
+}
+.nav-drop-btn .caret-down{
+  width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;
+  border-top:5px solid currentColor;transition:transform .2s;
+}
+.nav-drop.open .caret-down{transform:rotate(180deg);}
+.nav-sub{
+  display:none;position:absolute;right:0;top:calc(100% + 6px);z-index:1001;
+  min-width:250px;max-width:calc(100vw - 32px);
+  list-style:none;margin:0;padding:6px;
+  background:var(--paper);border:1px solid var(--rule);border-radius:10px;
+  box-shadow:0 12px 32px rgba(0,0,0,.18);
+}
+.nav-drop.open .nav-sub{display:block;}
+.nav-sub li{margin:0;}
+.nav-links .nav-sub a{display:block;white-space:normal;padding:8px 10px;}
+.nav-links .nav-sub a:hover{background:var(--accent-soft);}
+.nav-links .nav-sub a[aria-current="page"]{color:var(--accent);background:var(--accent-soft);}
 
 /* plain "← back" link used on English essay pages */
 .back{font-family:var(--mono);font-size:.76rem;color:var(--muted);text-decoration:none;}
@@ -460,6 +485,10 @@ article.longread{padding:40px 0 70px;max-width:var(--readw);}
   article.post{padding:38px 16px 30px;}
   .nav-inner{padding:12px 16px;flex-wrap:wrap;row-gap:6px;}
   .nav-name{white-space:normal;font-size:.95rem;}
+  /* the dropdown spans the bar's width instead of hanging off the Apps button */
+  .nav-inner{position:relative;}
+  .nav-drop{position:static;}
+  .nav-sub{left:16px;right:16px;top:100%;min-width:0;max-width:none;}
   :where(.post) p{font-size:1.02rem;}
   figure.fig img{padding:8px;}
 }

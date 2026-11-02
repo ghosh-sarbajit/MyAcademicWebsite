@@ -3,9 +3,9 @@ title: DP Budget Calculator
 weight: 4
 group: Privacy
 app: dp-budget
-summary: Add up the privacy cost of several differentially private steps on the same data, and find the noise a Gaussian mechanism needs.
-steps: [List the steps, Compare the compositions, Pick the noise]
+summary: Plan a privacy-preserving analysis before you run it. List what you will publish from a dataset and get its total privacy cost ε, or the amount of noise needed to stay within a budget.
+steps: [List what you will publish, Read the total cost, Pick the noise]
 ---
 
-Enter the ε and δ of each differentially private step and how many times it runs; the page gives the total (ε, δ) by basic composition, advanced composition and zCDP.
-For repeated Gaussian noise, as in DP-SGD, it gives ε exactly and by Rényi DP, or the noise needed for a target ε.
+Before publishing anything from private data, you can work out how much privacy it will cost in total.
+List what you plan to release and how often; the page adds up the cost and says in plain words how strong the protection is.

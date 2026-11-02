@@ -72,8 +72,10 @@ education:
     institution: West Bengal State University, Barasat
     start: 2016
     end: 2018
+    # Shown on the homepage card (local addition, see layouts/_partials/hbx/blocks/resume-biography-3/block.html)
+    honour: Vice-Chancellor's Gold Medal, ranked first in the batch
     summary: |
-      Marks: 81.3% • Recipient of First-Class First Vice-Chancellor Gold Medal
+      Marks: 81.3% • Vice-Chancellor's Gold Medal (First-Class First) for ranking first in the batch
   - degree: B.Sc in Mathematics
     institution: Rishi Bankim Chandra College, under West Bengal State University
     start: 2012
@@ -177,10 +179,10 @@ languages:
     label: Proficient
 
 awards:
-  - title: First-Class First Vice-Chancellor Gold Medal
+  - title: Vice-Chancellor's Gold Medal (First-Class First)
     awarder: West Bengal State University
     date: "2018-05-01"
-    summary: Recipient for exceptional performance in M.Sc Statistics program.
+    summary: Awarded for ranking first in the M.Sc Statistics batch (2016–2018).
     icon: hero/trophy
   - title: GATE Qualified in Statistics
     awarder: Graduate Aptitude Test in Engineering

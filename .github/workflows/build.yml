@@ -112,6 +112,29 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-hugo-resources-
 
+    # Writing posts show giscus comments only when comments.giscus.category_id is set in
+    # config/_default/params.yaml. While it is empty, look the id up from the comments repo
+    # (its Discussions must be on and have the category). If that fails, comments stay hidden.
+    - name: Look up the giscus category id
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        ID=$(yq '.hugoblox.comments.giscus.category_id // ""' config/_default/params.yaml)
+        if [ -n "$ID" ]; then echo "category_id is set in params.yaml"; exit 0; fi
+        REPO=$(yq '.hugoblox.comments.giscus.repo // ""' config/_default/params.yaml)
+        CAT=$(yq '.hugoblox.comments.giscus.category // ""' config/_default/params.yaml)
+        if [ -z "$REPO" ] || [ -z "$CAT" ]; then exit 0; fi
+        ID=$(gh api graphql -f owner="${REPO%%/*}" -f name="${REPO#*/}" -f query='
+          query($owner: String!, $name: String!) {
+            repository(owner: $owner, name: $name) { discussionCategories(first: 50) { nodes { id name } } }
+          }' --jq ".data.repository.discussionCategories.nodes[] | select(.name == \"$CAT\") | .id" 2>/dev/null || true)
+        if [ -n "$ID" ]; then
+          echo "giscus category '$CAT' in $REPO has id: $ID"
+          echo "HUGOxPARAMSxHUGOBLOXxCOMMENTSxGISCUSxCATEGORY_ID=$ID" >> "$GITHUB_ENV"
+        else
+          echo "::warning::No discussion category '$CAT' found in $REPO (are Discussions on?). Comments stay hidden."
+        fi
+
     - name: Build with Hugo
       env:
         HUGO_ENVIRONMENT: production

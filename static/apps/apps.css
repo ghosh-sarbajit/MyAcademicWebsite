@@ -296,3 +296,24 @@ details.custom p{margin:0;font-size:.94rem;line-height:1.65;}
 pre.bib-out{max-height:560px;overflow:auto;white-space:pre-wrap;word-break:break-word;font-size:.76rem;}
 .dups{margin:8px 0 0;padding-left:18px;font-family:var(--sans);font-size:.85rem;}
 .dups li{margin:2px 0;}
+
+/* DP Budget Calculator: the plain-language explanation and verdict */
+.dp-explain p{margin:0 0 12px;line-height:1.7;}
+.dp-uses{margin:-4px 0 14px;padding-left:1.2em;line-height:1.7;color:var(--ink-2);}
+.dp-scale{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 12px;}
+.dp-scale span{
+  flex:1 1 150px;border:1px solid var(--rule);border-radius:10px;padding:8px 12px;
+  font-size:.86rem;color:var(--ink-2);background:var(--card);
+}
+.dp-scale span b{display:block;font-family:var(--mono);color:var(--ink);}
+.dp-scale span:nth-child(1){border-left:4px solid #2e9e5b;}
+.dp-scale span:nth-child(2){border-left:4px solid #d39b1f;}
+.dp-scale span:nth-child(3){border-left:4px solid #d0473b;}
+.dp-plain{
+  margin:4px 0 12px;padding:10px 14px;border-radius:10px;border:1px solid var(--rule);
+  border-left-width:4px;background:var(--card);font-size:.93rem;line-height:1.6;
+}
+.dp-plain.good{border-left-color:#2e9e5b;}
+.dp-plain.ok{border-left-color:#d39b1f;}
+.dp-plain.bad{border-left-color:#d0473b;}
+.app-form .row .hint{align-self:center;}

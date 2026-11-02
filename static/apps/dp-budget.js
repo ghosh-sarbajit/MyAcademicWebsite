@@ -130,13 +130,20 @@
   const stepsBox = $('[data-steps]', app), form = $('[data-form]', app), out = $('[data-total]', app);
   const gform = $('[data-gauss]', app), gout = $('[data-gauss-out]', app);
 
-  const EXAMPLE = [
-    { name: 'Counting query (Laplace)', eps: 0.1, delta: 0, k: 20 },
-    { name: 'Histogram release', eps: 0.5, delta: 0, k: 2 },
-    { name: 'Gaussian mean', eps: 0.3, delta: 1e-6, k: 5 },
-  ];
+  const EXAMPLES = {
+    survey: [
+      { name: 'Head count per district (Laplace noise)', eps: 0.1, delta: 0, k: 20 },
+      { name: 'Age and income histograms', eps: 0.5, delta: 0, k: 2 },
+      { name: 'Average income per region (Gaussian noise)', eps: 0.3, delta: 1e-6, k: 5 },
+    ],
+    dashboard: [
+      { name: 'Daily visitor count', eps: 0.02, delta: 0, k: 30 },
+      { name: 'Daily top-10 pages', eps: 0.05, delta: 0, k: 30 },
+    ],
+  };
+  const copy = rs => rs.map(r => Object.assign({}, r));
   const saved = A.load(KEY, null) || {};
-  let rows = Array.isArray(saved.rows) && saved.rows.length ? saved.rows : EXAMPLE.map(r => Object.assign({}, r));
+  let rows = Array.isArray(saved.rows) && saved.rows.length ? saved.rows : copy(EXAMPLES.survey);
   if (saved.slack) form.slack.value = saved.slack;
   for (const n of ['sigma', 'steps', 'delta', 'target']) if (saved[n] != null) gform[n].value = saved[n];
 
@@ -153,12 +160,12 @@
 
   function drawSteps() {
     stepsBox.innerHTML = rows.map((r, i) => `<div class="dp-step" data-i="${i}">
-      <label>Step <input type="text" name="name" value="${esc(r.name)}" placeholder="e.g. Laplace count"></label>
-      <label>ε <input type="number" name="eps" value="${esc(r.eps)}" min="0" step="any" required></label>
-      <label>δ <input type="number" name="delta" value="${esc(r.delta)}" min="0" max="1" step="any"></label>
-      <label>Times <input type="number" name="k" value="${esc(r.k)}" min="1" step="1"></label>
-      <button type="button" class="link-btn" data-remove aria-label="Remove step ${i + 1}">remove</button>
-    </div>`).join('') || '<p class="empty">No steps: add one below.</p>';
+      <label>Result <input type="text" name="name" value="${esc(r.name)}" placeholder="e.g. count of patients"></label>
+      <label>ε each <input type="number" name="eps" value="${esc(r.eps)}" min="0" step="any" required></label>
+      <label>δ each <input type="number" name="delta" value="${esc(r.delta)}" min="0" max="1" step="any"></label>
+      <label>How many <input type="number" name="k" value="${esc(r.k)}" min="1" step="1"></label>
+      <button type="button" class="link-btn" data-remove aria-label="Remove row ${i + 1}">remove</button>
+    </div>`).join('') || '<p class="empty">Nothing yet: add a row below, or load an example.</p>';
   }
 
   function total() {
@@ -166,7 +173,7 @@
     const steps = rows.map(r => ({ eps: num(r.eps), delta: num(r.delta) || 0, k: Math.round(num(r.k)) }));
     if (!steps.length) { out.innerHTML = ''; return; }
     if (steps.some(s => !(s.eps >= 0) || !(s.delta >= 0 && s.delta < 1) || !(s.k >= 1))) {
-      out.innerHTML = '<p class="notice">Each step needs ε ≥ 0, 0 ≤ δ &lt; 1 and Times ≥ 1.</p>';
+      out.innerHTML = '<p class="notice">Each row needs ε ≥ 0, 0 ≤ δ &lt; 1 and “How many” ≥ 1.</p>';
       return;
     }
     if (!(slack > 0 && slack < 1)) {
@@ -175,18 +182,31 @@
     }
     const k = steps.reduce((s, x) => s + x.k, 0);
     const res = [
-      ['Basic composition', basic(steps), 'Adds up ε and δ. Always valid, and tight for a few steps.'],
-      ['Advanced composition', advanced(steps, slack), `Grows like √k instead of k; adds δ′ = ${sig(slack)} to δ. Better for many small steps.`],
+      ['Basic composition', basic(steps), 'Simply adds up every ε and every δ. Best when there are only a few results.'],
+      ['Advanced composition', advanced(steps, slack), `A sharper sum for many small costs: it grows like the square root of the number of results, at the price of adding δ′ = ${sig(slack)} to δ.`],
     ];
     const z = zcdp(steps, slack);
-    res.push(['zCDP', z, z ? `ρ = ${sig(z.rho)}. Each ε-DP step is ε²/2-zCDP; δ is the slack δ′.`
-      : 'Only when every step is pure (δ = 0).']);
+    res.push(['zCDP', z, z ? `Sharper still when every row has δ = 0 (ρ = ${sig(z.rho)}); δ becomes the slack δ′.`
+      : 'Applies only when every row has δ = 0.']);
     const best = Math.min(...res.filter(r => r[1]).map(r => r[1].eps));
-    out.innerHTML = `<p class="small">${steps.length} step${steps.length === 1 ? '' : 's'}, ${k} mechanism${k === 1 ? '' : 's'} run in all.</p>
+    const top = res.find(r => r[1] && r[1].eps === best)[1];
+    out.innerHTML = `<p class="small">${steps.length} row${steps.length === 1 ? '' : 's'}, ${k} result${k === 1 ? '' : 's'} published in all.</p>
       <div class="dp-results">${res.map(([name, r, note]) => `<div class="dp-result${r && r.eps === best ? ' best' : ''}${r ? '' : ' na'}">
         <p class="label">${esc(name)}${r && r.eps === best ? ' <span class="best-tag">smallest ε</span>' : ''}</p>
         <p class="dp-num">${r ? `ε = <b>${esc(sig(r.eps))}</b>, δ = <b>${esc(sig(r.delta, 3))}</b>` : '—'}</p>
-        <p class="hint">${note}</p></div>`).join('')}</div>`;
+        <p class="hint">${note}</p></div>`).join('')}</div>
+      ${plain(top.eps, top.delta)}`;
+  }
+
+  // A plain-language reading of a total (ε, δ).
+  function plain(eps, delta) {
+    const level = eps <= 1 ? ['strong', 'good'] : eps <= 10 ? ['moderate', 'ok'] : ['weak', 'bad'];
+    const f = Math.exp(eps);
+    const [m, e] = f.toExponential(1).split('e+');
+    const factor = f < 1e6 ? esc(f < 10 ? f.toFixed(2) : Math.round(f).toLocaleString('en')) : `${esc(m)} × 10<sup>${esc(e)}</sup>`;
+    return `<p class="dp-plain ${level[1]}"><b>In plain words:</b> ε = ${esc(sig(eps))} is <b>${level[0]}</b> protection.
+      Seeing everything you publish can change anyone's odds that a given person is in the data by a factor of at most
+      e<sup>ε</sup> ≈ ${factor}${delta > 0 ? `, except with a chance of at most δ = ${esc(sig(delta, 3))}` : ''}.</p>`;
   }
 
   function gauss() {
@@ -200,17 +220,17 @@
     let html = `<div class="dp-results">
       <div class="dp-result best"><p class="label">Exact (Gaussian DP)</p>
         <p class="dp-num">ε = <b>${esc(sig(ex.eps))}</b></p>
-        <p class="hint">The ${k} steps together are one Gaussian mechanism with μ = √k/σ = ${esc(sig(ex.mu))}.</p></div>
+        <p class="hint">The exact cost of the ${k} noisy steps together (μ = √k/σ = ${esc(sig(ex.mu))}).</p></div>
       <div class="dp-result"><p class="label">Rényi DP</p>
         <p class="dp-num">ε = <b>${esc(sig(rdp.eps))}</b></p>
-        <p class="hint">At order α = ${esc(sig(rdp.alpha, 3))}, with the conversion Opacus uses.</p></div>
+        <p class="hint">The slightly larger figure that Opacus and most papers report (order α = ${esc(sig(rdp.alpha, 3))}).</p></div>
     </div>`;
     if (target != null) {
       html += target > 0
         ? `<p class="small">For ε = ${esc(sig(target))} at δ = ${esc(sig(delta, 3))} over ${k} steps, use σ ≥ <b>${esc(sig(sigmaFor(target, k, delta)))}</b>.</p>`
         : '<p class="notice">The target ε must be above 0.</p>';
     }
-    gout.innerHTML = html + `<p class="hint">For full-batch steps. With minibatch sampling (DP-SGD's sampling rate q &lt; 1) the cost is lower; use an accountant such as Opacus or Google's dp-accounting for that.</p>`;
+    gout.innerHTML = html + plain(ex.eps, delta) + `<p class="hint">This assumes every step uses the whole dataset. Most training uses a random batch at each step, which costs less; for that, use a tool such as Opacus or Google's dp-accounting.</p>`;
   }
 
   stepsBox.addEventListener('input', e => {
@@ -231,10 +251,10 @@
     const inputs = stepsBox.querySelectorAll('[name="name"]');
     if (inputs.length) inputs[inputs.length - 1].focus();
   });
-  $('[data-example]', app).addEventListener('click', () => {
-    rows = EXAMPLE.map(r => Object.assign({}, r));
+  app.querySelectorAll('[data-example]').forEach(b => b.addEventListener('click', () => {
+    rows = copy(EXAMPLES[b.dataset.example]);
     store(); drawSteps(); total();
-  });
+  }));
   form.addEventListener('input', e => { if (e.target.name === 'slack') { store(); total(); } });
   form.addEventListener('submit', e => e.preventDefault());
   gform.addEventListener('input', () => { store(); gauss(); });

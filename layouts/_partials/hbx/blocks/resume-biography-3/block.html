@@ -1,7 +1,9 @@
 {{/* Hugo Blox: Biography 3 */}}
 {{/* LOCAL OVERRIDE of the HugoBlox block (kit/modules/blox/blox/resume-biography-3/block.html).
-     Only change: an optional name line below the main name, from `name.below` in
-     data/authors/<username>.yaml (used for the Tamil name). Re-apply it after a theme upgrade. */}}
+     Local changes (re-apply them after a theme upgrade):
+     - an optional name line below the main name, from `name.below` in data/authors/<username>.yaml (the Tamil name);
+     - the "Download CV" button sits in the left column under the social icons, not in the right column;
+     - education dates on one line ("2016–2018"), and an optional `honour` line per education entry. */}}
 {{/* Documentation: https://hugoblox.com/blocks/ */}}
 {{/* License: https://github.com/HugoBlox/kit/blob/main/LICENSE.md */}}
 
@@ -345,6 +347,37 @@
           {{ end }}
         </div>
         {{ end }}
+
+        {{/* CV Download Button (local change: moved here from the right column, under the social icons) */}}
+        {{ $button_raw := index $content "button" }}
+        {{ if and $button_raw (reflect.IsMap $button_raw) }}
+          {{ $button_text := "" }}
+          {{ $button_url := "" }}
+          {{ with index $button_raw "text" }}{{ $button_text = printf "%v" . }}{{ end }}
+          {{ with index $button_raw "url" }}{{ $button_url = printf "%v" . }}{{ end }}
+          {{ $button_text = strings.TrimSpace $button_text }}
+          {{ $button_url = strings.TrimSpace $button_url }}
+          {{ if and $button_text $button_url }}
+            {{ $button_link := $button_url }}
+            {{ $scheme := (urls.Parse $button_link).Scheme }}
+            {{ $target := "" }}
+            {{ if not $scheme }}
+              {{ if not (hasPrefix $button_link "#") }}
+                {{ $button_link = $button_link | relLangURL }}
+              {{ end }}
+              {{ if eq (path.Ext $button_link) ".pdf" }}{{ $target = "target=\"_blank\" rel=\"noopener\"" }}{{ end }}
+            {{ else if in (slice "http" "https") $scheme }}
+              {{ $target = "target=\"_blank\" rel=\"noopener\"" }}
+            {{ end }}
+            <div class="cv-button">
+              <a href="{{ $button_link | safeURL }}" {{ $target | safeHTMLAttr }}
+                 class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-primary-600 to-secondary-600 hover:from-primary-700 hover:to-secondary-700 text-white font-bold text-base rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300">
+                {{ partial "functions/get_icon" (dict "name" "document-arrow-down" "attributes" "class='w-5 h-5 mr-3'") }}
+                {{ $button_text }}
+              </a>
+            </div>
+          {{ end }}
+        {{ end }}
       </div>
 
       {{/* Right Column: Flexible span */}}
@@ -383,37 +416,6 @@
             </div>
           </div>
         </div>
-        {{ end }}
-
-        {{/* CV Download Button */}}
-        {{ $button_raw := index $content "button" }}
-        {{ if and $button_raw (reflect.IsMap $button_raw) }}
-          {{ $button_text := "" }}
-          {{ $button_url := "" }}
-          {{ with index $button_raw "text" }}{{ $button_text = printf "%v" . }}{{ end }}
-          {{ with index $button_raw "url" }}{{ $button_url = printf "%v" . }}{{ end }}
-          {{ $button_text = strings.TrimSpace $button_text }}
-          {{ $button_url = strings.TrimSpace $button_url }}
-          {{ if and $button_text $button_url }}
-            {{ $button_link := $button_url }}
-            {{ $scheme := (urls.Parse $button_link).Scheme }}
-            {{ $target := "" }}
-            {{ if not $scheme }}
-              {{ if not (hasPrefix $button_link "#") }}
-                {{ $button_link = $button_link | relLangURL }}
-              {{ end }}
-              {{ if eq (path.Ext $button_link) ".pdf" }}{{ $target = "target=\"_blank\" rel=\"noopener\"" }}{{ end }}
-            {{ else if in (slice "http" "https") $scheme }}
-              {{ $target = "target=\"_blank\" rel=\"noopener\"" }}
-            {{ end }}
-            <div class="mb-16">
-              <a href="{{ $button_link | safeURL }}" {{ $target | safeHTMLAttr }}
-                 class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-primary-600 to-secondary-600 hover:from-primary-700 hover:to-secondary-700 text-white font-bold text-lg rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300">
-                {{ partial "functions/get_icon" (dict "name" "document-arrow-down" "attributes" "class='w-5 h-5 mr-3'") }}
-                {{ $button_text }}
-              </a>
-            </div>
-          {{ end }}
         {{ end }}
 
         {{/* Education Section */}}
@@ -472,16 +474,18 @@
                     {{ $degree }}
                   </p>
                   {{ end }}
+                  {{/* local change: start and end on one line ("2016–2018", "2021–Present") */}}
                   {{ if $year }}
                     <p class="text-gray-500 dark:text-gray-400 text-sm mt-2">{{ $year }}</p>
                   {{ else if $start }}
-                    <p class="text-gray-500 dark:text-gray-400 text-sm mt-2">
-                      {{ $start }}
-                      {{ if $end }}<br>{{ $end }}{{ end }}
-                    </p>
+                    <p class="text-gray-500 dark:text-gray-400 text-sm mt-2 whitespace-nowrap">{{ $start }}–{{ $end | default "Present" }}</p>
                   {{ end }}
                   {{ if $institution }}
                     <p class="text-gray-700 dark:text-gray-300 text-base">{{ $institution }}</p>
+                  {{ end }}
+                  {{/* local addition: an optional `honour` line from data/authors/<username>.yaml */}}
+                  {{ with index . "honour" }}
+                    <p class="text-primary-700 dark:text-primary-300 text-sm font-semibold mt-2">🏅 {{ . }}</p>
                   {{ end }}
                 </div>
               </div>

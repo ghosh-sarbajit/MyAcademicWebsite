@@ -1,21 +1,56 @@
 {{- /* DP Budget Calculator; the maths is in static/apps/dp-budget.js. */ -}}
 <div data-app="dp-budget">
 
+  <section class="block" id="about">
+    <div class="wrap block-grid">
+      <div class="rail"><span class="num">00</span><h2>What is this for?</h2></div>
+      <div class="body dp-explain">
+        <p><b>The promise.</b> Differential privacy (DP) is a promise to the people in a dataset: anything you publish from it
+          (a count, an average, a chart, a trained model) comes out almost the same whether or not any one person's record is in the data,
+          because a little random noise is added. So nobody can learn much about a single person from what you publish.</p>
+        <p><b>The budget.</b> How strong the promise is, is measured by a number called <b>ε</b> (epsilon): smaller is more private.
+          Every result you publish from the same data uses up some of it, and the costs add up, like spending from a budget.
+          Publish too much and the total ε gets so large that the promise means little.</p>
+        <p><b>Why no data?</b> The cost depends only on <i>how</i> you will publish (how much noise each result gets and how many results there are),
+          never on the values in the data. That is the point: you work it out <i>before</i> touching the data, the way you price a trip before you book it.
+          People use it to</p>
+        <ul class="dp-uses">
+          <li>plan a data release (a survey report, a dashboard, a census table) that stays within a budget chosen in advance, say ε ≤ 1;</li>
+          <li>decide how much noise to add, for example when training a model with DP-SGD;</li>
+          <li>check the privacy claim in a paper or a product (“ε = 8 over 1000 training steps”).</li>
+        </ul>
+        <div class="dp-scale" aria-label="How to read ε">
+          <span><b>ε ≤ 1</b> strong</span>
+          <span><b>1 – 10</b> moderate, common for trained models</span>
+          <span><b>&gt; 10</b> weak</span>
+        </div>
+        <p class="hint"><b>δ</b> (delta) is the small chance that the promise fails outright. Keep it far below one over the number of people,
+          for example 1e-5 for 100,000 people. Methods that add Laplace noise have δ = 0.</p>
+      </div>
+    </div>
+  </section>
+
   <section class="block" id="steps">
     <div class="wrap block-grid">
-      <div class="rail"><span class="num">01</span><h2>Steps</h2></div>
+      <div class="rail"><span class="num">01</span><h2>What you will publish</h2></div>
       <div class="body">
-        <p class="small">Each step is an (ε, δ)-differentially private mechanism run on the same data, “Times” times. Use δ = 0 for pure ε-DP steps such as the Laplace mechanism.</p>
+        <p class="small">One row per kind of result, with the ε and δ each one costs and how many times you publish it.
+          The cost of a single result comes from its method: for example, a count with Laplace noise of scale 1/ε costs ε.</p>
         <div class="dp-steps" data-steps></div>
         <form class="app-form" data-form>
           <div class="row">
-            <button type="button" class="btn" data-add>Add a step</button>
-            <button type="button" class="link-btn" data-example>load the example</button>
+            <button type="button" class="btn" data-add>Add a row</button>
+            <span class="hint">Examples:</span>
+            <button type="button" class="link-btn" data-example="survey">a survey report</button>
+            <button type="button" class="link-btn" data-example="dashboard">a daily dashboard for a month</button>
           </div>
-          <div class="field-row">
-            <label>Slack δ′ <span class="hint">(for advanced composition and zCDP)</span>
-              <input type="number" name="slack" value="1e-5" min="0" max="1" step="any"></label>
-          </div>
+          <details class="settings">
+            <summary>Advanced: slack δ′</summary>
+            <div class="field-row">
+              <label>Slack δ′ <span class="hint">(the extra δ that advanced composition and zCDP add in exchange for a smaller ε)</span>
+                <input type="number" name="slack" value="1e-5" min="0" max="1" step="any"></label>
+            </div>
+          </details>
         </form>
       </div>
     </div>
@@ -23,25 +58,26 @@
 
   <section class="block" id="total">
     <div class="wrap block-grid">
-      <div class="rail"><span class="num">02</span><h2>Total</h2></div>
+      <div class="rail"><span class="num">02</span><h2>Total privacy cost</h2></div>
       <div class="body">
         <div data-total aria-live="polite"></div>
-        <p class="hint">Each rule gives a valid guarantee; report the one with the smallest ε, together with its δ.</p>
+        <p class="hint">The three rules are different ways of adding up the same costs. All three are correct, so you may report whichever gives the smallest ε, together with its δ.</p>
       </div>
     </div>
   </section>
 
   <section class="block" id="gaussian">
     <div class="wrap block-grid">
-      <div class="rail"><span class="num">03</span><h2>Gaussian noise</h2></div>
+      <div class="rail"><span class="num">03</span><h2>Training a model</h2></div>
       <div class="body">
-        <p class="small">k steps that each add Gaussian noise with standard deviation σ × (L2 sensitivity), as full-batch DP-SGD does.</p>
+        <p class="small">Training a model privately (DP-SGD) adds Gaussian noise at every training step, so a model trained for many steps is many releases.
+          Enter how much noise each step adds and how many steps there are to get the total ε, or enter the ε you are aiming for to get the noise you need.</p>
         <form class="app-form" data-gauss>
           <div class="field-row">
-            <label>Noise multiplier σ <input type="number" name="sigma" value="1.1" min="0" step="any"></label>
-            <label>Steps k <input type="number" name="steps" value="100" min="1" step="1"></label>
+            <label>Noise multiplier σ <span class="hint">(noise ÷ clipping norm)</span> <input type="number" name="sigma" value="10" min="0" step="any"></label>
+            <label>Training steps <input type="number" name="steps" value="100" min="1" step="1"></label>
             <label>δ <input type="number" name="delta" value="1e-5" min="0" max="1" step="any"></label>
-            <label>Target ε <span class="hint">(optional: the σ needed)</span>
+            <label>Target ε <span class="hint">(optional: gives the σ you need)</span>
               <input type="number" name="target" value="" min="0" step="any" placeholder="e.g. 8"></label>
           </div>
         </form>
@@ -52,7 +88,7 @@
 
   <section class="block" id="method">
     <div class="wrap block-grid">
-      <div class="rail"><span class="num">04</span><h2>Method</h2></div>
+      <div class="rail"><span class="num">04</span><h2>The maths</h2></div>
       <div class="body">
         <details class="custom">
           <summary>How this is worked out</summary>
@@ -65,7 +101,7 @@
           <p><b>Gaussian, by Rényi DP</b> (Mironov 2017). Order α costs kα/(2σ²), and is converted to
             ε = RDP + ln((α−1)/α) − (ln δ + ln α)/(α − 1) (Balle et al. 2020, as in Opacus), at the best α. It is never below the exact value, but it is what most DP-SGD papers report.</p>
         </details>
-        <p class="hint">Everything is worked out in your browser. Your steps are kept in this browser for your next visit.</p>
+        <p class="hint">Everything is worked out in your browser. Your rows are kept in this browser for your next visit.</p>
       </div>
     </div>
   </section>
